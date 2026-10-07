@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from pathlib import Path
 
 from .config import load_config, resolve
 
@@ -113,6 +114,29 @@ def cmd_benchmark(args) -> int:
     return 0
 
 
+def cmd_monitor(args) -> int:
+    from .monitoring.drift import monitor, report_markdown
+    from .tracing import read_traces
+
+    cfg = load_config(args.config)
+    if args.baseline and args.current:
+        base, cur = read_traces(args.baseline), read_traces(args.current)
+        title = f"{args.baseline} vs {args.current}"
+    else:
+        traces = sorted(read_traces(args.traces or resolve(cfg, "trace_path")), key=lambda t: t["ts"])
+        if len(traces) < 20:
+            raise SystemExit(f"need at least 20 traces to compare windows, found {len(traces)}")
+        half = len(traces) // 2
+        base, cur = traces[:half], traces[half:]
+        title = f"first {len(base)} vs last {len(cur)} traces"
+    rep = monitor(base, cur)
+    text = report_markdown(rep, title)
+    print(text)
+    if args.out:
+        Path(args.out).write_text(text)
+    return 2 if (args.fail_on_alert and rep.status == "ALERT") else 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="bankrag", description=__doc__)
     parser.add_argument("--config", help="path to config.yaml (default: repo config or $BANKRAG_CONFIG)")
@@ -135,6 +159,14 @@ def build_parser() -> argparse.ArgumentParser:
 
     bench = sub.add_parser("benchmark", help="compare bm25 vs tfidf vs hybrid")
     bench.set_defaults(func=cmd_benchmark)
+
+    mon = sub.add_parser("monitor", help="PSI + KS drift check between two windows of traces")
+    mon.add_argument("--baseline", help="baseline traces JSONL")
+    mon.add_argument("--current", help="current traces JSONL")
+    mon.add_argument("--traces", help="single trace file to split in half by time (default: config trace_path)")
+    mon.add_argument("--out", help="write the markdown report here")
+    mon.add_argument("--fail-on-alert", action="store_true", help="exit 2 if status is ALERT (for scheduled jobs)")
+    mon.set_defaults(func=cmd_monitor)
     return parser
 
 
