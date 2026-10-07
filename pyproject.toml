@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bankrag"
+version = "0.1.0"
+description = "Evaluation-first RAG assistant for a fictional bank: golden set, guardrails, quality gates and drift monitoring."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Muhammad Fazrin Hafiz" }]
+requires-python = ">=3.11"
+dependencies = ["numpy>=1.26", "scikit-learn>=1.4", "pyyaml>=6.0"]
+
+[project.optional-dependencies]
+openai = ["openai>=1.40"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+bankrag = "bankrag.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
