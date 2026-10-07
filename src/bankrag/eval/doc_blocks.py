@@ -62,8 +62,8 @@ def benchmark_block(root: Path) -> str:
         lines.append(f"| {r['mode']}{star} | {r['dev_abstention_f1']:.3f} | {r['dev_key_fact_recall']:.1%} | {r['all_hit_at_1']:.1%} | {r['all_mrr']:.3f} | "
                      f"{r['test_key_fact_recall']:.1%} | {r['test_abstention_precision']:.1%} / {r['test_abstention_recall']:.1%} | "
                      f"{r['test_confidence_auroc']:.3f} | {r['test_task_success']:.1%} |")
-    lines += ["", f"✅ = selected on **dev** metrics only (`{data['selected_on_dev']}`). All three modes reach hit@3 = "
-              f"{', '.join(f'{r['all_hit_at_3']:.0%}' for r in data['rows'])}."]
+    hit3 = ", ".join(f"{r['all_hit_at_3']:.0%}" for r in data["rows"])
+    lines += ["", f"✅ = selected on **dev** metrics only (`{data['selected_on_dev']}`). All three modes reach hit@3 = {hit3}."]
     return "\n".join(lines)
 
 

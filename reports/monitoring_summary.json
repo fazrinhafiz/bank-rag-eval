@@ -9,8 +9,8 @@
       "topic_mix": 0.047
     },
     "ks_p": {
-      "retrieval_confidence": 0.36356150151745903,
-      "query_length": 0.7090913097601383
+      "retrieval_confidence": 0.363562,
+      "query_length": 0.709091
     },
     "rates": {
       "abstained_rate": [
@@ -37,8 +37,8 @@
       "topic_mix": 0.304
     },
     "ks_p": {
-      "retrieval_confidence": 2.4224866348091628e-11,
-      "query_length": 0.0002183068861607883
+      "retrieval_confidence": 0.0,
+      "query_length": 0.000218
     },
     "rates": {
       "abstained_rate": [

@@ -8,7 +8,7 @@ Split **test**, 34 items. The abstain threshold was calibrated on the **dev** sp
 
 | key | value |
 |---|---|
-| code_version | `6f78372-dirty` |
+| code_version | `dd4227c-dirty` |
 | config_fingerprint | `a65539573446` |
 | golden_set_sha | `e571e0a4836a` |
 | prompt_version | `answer_v1` |
