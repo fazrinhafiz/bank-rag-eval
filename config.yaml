@@ -12,13 +12,13 @@ chunking:
   overlap_words: 30
 
 retrieval:
-  mode: hybrid          # bm25 | tfidf | hybrid
+  mode: tfidf           # bm25 | tfidf | hybrid  - selected on DEV by `bankrag benchmark` (see reports/benchmark.md)
   top_k: 3
   rrf_k: 60             # Reciprocal Rank Fusion constant
   bm25_k1: 1.5
   bm25_b: 0.75
 
-abstain_threshold: 0.30  # placeholder until `calibrate` is run
+abstain_threshold: 0.2813  # written by `bankrag calibrate` (dev split)
 
 generation:
   provider: offline      # offline | openai | azure   (env BANKRAG_PROVIDER overrides)
