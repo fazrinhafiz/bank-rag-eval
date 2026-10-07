@@ -109,6 +109,7 @@ def cmd_benchmark(args) -> int:
     out = resolve(cfg, "reports_dir") / "benchmark.md"
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(text)
+    (out.parent / "benchmark.json").write_text(json.dumps({"selected_on_dev": select_mode(rows), "rows": rows}, indent=2))
     print(text)
     print(f"selected on dev: {select_mode(rows)}   (configured: {cfg['retrieval']['mode']})\nwritten: {out}")
     return 0

@@ -1,0 +1,58 @@
+{
+  "control": {
+    "status": "OK",
+    "n_baseline": 500,
+    "n_current": 500,
+    "psi": {
+      "retrieval_confidence": 0.035,
+      "query_length": 0.022,
+      "topic_mix": 0.047
+    },
+    "ks_p": {
+      "retrieval_confidence": 0.36356150151745903,
+      "query_length": 0.7090913097601383
+    },
+    "rates": {
+      "abstained_rate": [
+        0.16,
+        0.128
+      ],
+      "blocked_rate": [
+        0.02,
+        0.022
+      ],
+      "pii_rate": [
+        0.168,
+        0.1
+      ]
+    }
+  },
+  "drifted": {
+    "status": "ALERT",
+    "n_baseline": 500,
+    "n_current": 500,
+    "psi": {
+      "retrieval_confidence": 0.296,
+      "query_length": 0.134,
+      "topic_mix": 0.304
+    },
+    "ks_p": {
+      "retrieval_confidence": 2.4224866348091628e-11,
+      "query_length": 0.0002183068861607883
+    },
+    "rates": {
+      "abstained_rate": [
+        0.16,
+        0.364
+      ],
+      "blocked_rate": [
+        0.02,
+        0.008
+      ],
+      "pii_rate": [
+        0.168,
+        0.066
+      ]
+    }
+  }
+}
