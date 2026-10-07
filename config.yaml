@@ -1,0 +1,33 @@
+# bankrag runtime configuration. Any change here should be followed by `python -m bankrag eval`
+# (the quality gate). `abstain_threshold` is written by `python -m bankrag calibrate` - do not hand-tune it.
+
+docs_dir: data/docs
+golden_set: eval/golden_set.jsonl
+thresholds: eval/thresholds.yaml
+reports_dir: reports
+trace_path: traces/traces.jsonl
+
+chunking:
+  max_words: 120        # sections longer than this are split into overlapping windows
+  overlap_words: 30
+
+retrieval:
+  mode: hybrid          # bm25 | tfidf | hybrid
+  top_k: 3
+  rrf_k: 60             # Reciprocal Rank Fusion constant
+  bm25_k1: 1.5
+  bm25_b: 0.75
+
+abstain_threshold: 0.30  # placeholder until `calibrate` is run
+
+generation:
+  provider: offline      # offline | openai | azure   (env BANKRAG_PROVIDER overrides)
+  model: offline-extractive-v1   # for openai/azure: env BANKRAG_MODEL overrides
+  prompt: prompts/answer_v1.yaml
+  max_sentences: 2       # offline extractive baseline only
+  max_tokens: 300
+
+cost_per_1k_tokens:      # USD, used for trace cost estimates; set to your provider's price sheet
+  offline: {input: 0.0, output: 0.0}
+  openai: {input: 0.00015, output: 0.0006}
+  azure: {input: 0.00015, output: 0.0006}
