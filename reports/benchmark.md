@@ -8,8 +8,8 @@ the end-to-end columns are measured on the **test** split. Retrieval columns use
 
 | mode | dev abstain F1 | dev key-fact recall | hit@1 (all) | hit@3 (all) | MRR (all) | threshold (dev) | key-fact recall (test) | abstain P (test) | abstain R (test) | abstain F1 (test) | conf. AUROC (test) | task success (test) | retrieval p50 |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| bm25 | 0.667 | 76.5% | 85.4% | 100.0% | 0.923 | 0.591 | 75.0% | 44.4% | 66.7% | 0.533 | 0.833 | 76.5% | 0.23 ms |
-| tfidf | 0.750 | 82.4% | 92.7% | 100.0% | 0.963 | 0.281 | 87.5% | 100.0% | 50.0% | 0.667 | 0.889 | 82.4% | 0.23 ms |
-| hybrid | 0.667 | 76.5% | 92.7% | 100.0% | 0.963 | 0.473 | 70.8% | 44.4% | 66.7% | 0.533 | 0.861 | 73.5% | 0.26 ms |
+| bm25 | 0.667 | 76.5% | 85.4% | 100.0% | 0.923 | 0.591 | 75.0% | 44.4% | 66.7% | 0.533 | 0.833 | 76.5% | 0.24 ms |
+| tfidf | 0.750 | 82.4% | 92.7% | 100.0% | 0.963 | 0.281 | 87.5% | 100.0% | 50.0% | 0.667 | 0.889 | 82.4% | 0.24 ms |
+| hybrid | 0.667 | 76.5% | 92.7% | 100.0% | 0.963 | 0.473 | 70.8% | 44.4% | 66.7% | 0.533 | 0.861 | 73.5% | 0.25 ms |
 
 Latency is wall-clock on the machine that ran the benchmark and varies run to run; all other columns are deterministic.

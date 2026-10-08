@@ -115,8 +115,9 @@ What an independent validator (not the developer) should do before approval:
 **Recommendation: not approved for customer-facing use.** It's suitable as a development baseline and
 evaluation harness. Agent-assist pilot approval is conditional on the open items above.
 
-Approval record (to be completed): approver, date, version approved (git sha + config fingerprint +
-prompt sha from the eval report metadata), conditions, next review date.
+Approval record (to be completed): approver, date, version approved (git commit + the
+`source_fingerprint` from the eval report metadata, which hashes the code, config, prompts, golden set,
+gates and documents that produced the results), conditions, next review date.
 
 ## 4. Monitoring
 
@@ -157,7 +158,7 @@ For each one:
 2. If retrieval or documents changed, re-run `calibrate` (dev) and `benchmark`.
 3. Run `python -m bankrag eval`. **The gate must pass on the test split.** CI enforces this on every push and PR.
 4. Review the error analysis in `reports/eval_report.md`, not just the pass/fail.
-5. Record the code sha, config fingerprint, prompt sha and golden-set sha from the report metadata in the change record.
+5. Record the git commit and the report's `source_fingerprint`, `prompt_sha` and `golden_set_sha` in the change record. Recomputing `source_fingerprint` from the approved checkout must give the same value, which proves the report belongs to that exact tree.
 6. Material changes (new model family, new product documents, new intents) go back to independent validation.
 
 Gates are never lowered to make a change pass. Lowering a gate is its own change request, with written

@@ -8,7 +8,7 @@ Split **dev**, 23 items. ⚠️ This is not the test split, so the results are n
 
 | key | value |
 |---|---|
-| code_version | `dd4227c-dirty` |
+| source_fingerprint | `8ec6b1424296` |
 | config_fingerprint | `a65539573446` |
 | golden_set_sha | `e571e0a4836a` |
 | prompt_version | `answer_v1` |
@@ -80,8 +80,8 @@ Split **dev**, 23 items. ⚠️ This is not the test split, so the results are n
 
 | metric | value |
 |---|---|
-| end-to-end latency p50 | 0.36 ms |
-| end-to-end latency p95 | 0.44 ms |
+| end-to-end latency p50 | 0.38 ms |
+| end-to-end latency p95 | 0.49 ms |
 | mean tokens / request (estimated for offline) | 419 |
 | mean cost / request | $0.000000 |
 

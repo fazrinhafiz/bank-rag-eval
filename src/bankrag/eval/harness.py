@@ -4,7 +4,6 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-import subprocess
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
 
@@ -22,14 +21,19 @@ def file_sha(path: str | Path) -> str:
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()[:12]
 
 
-def git_version(root: str | Path) -> str:
-    try:
-        sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], cwd=root, capture_output=True, text=True, check=True).stdout.strip()
-        dirty = subprocess.run(["git", "status", "--porcelain", "--", "src", "config.yaml", "prompts", "eval"],
-                               cwd=root, capture_output=True, text=True).stdout.strip()
-        return sha + ("-dirty" if dirty else "")
-    except (OSError, subprocess.CalledProcessError):
-        return "unknown"
+SOURCE_GLOBS = ("src/bankrag/**/*.py", "config.yaml", "prompts/*.yaml", "eval/golden_set.jsonl",
+                "eval/thresholds.yaml", "data/docs/*.md")
+
+
+def source_fingerprint(root: str | Path) -> str:
+    """Hash of everything that determines the results: code, config, prompts, golden set, gates, documents.
+    Unlike a git sha it can be embedded in a report committed alongside the code, and anyone can recompute
+    it from a checkout to confirm the report matches that tree."""
+    root = Path(root)
+    h = hashlib.sha256()
+    for path in sorted({p for g in SOURCE_GLOBS for p in root.glob(g)}):
+        h.update(path.relative_to(root).as_posix().encode() + b"\0" + path.read_bytes() + b"\0")
+    return h.hexdigest()[:12]
 
 
 @dataclass
@@ -191,7 +195,7 @@ def run_eval(cfg: dict, split: str = "test", pipeline: Pipeline | None = None, j
         resp = pipe.ask(item["question"])
         results.append(score_item(item, resp, [chunk_text[c] for c in resp.retrieved], judge))
     metadata = {
-        "code_version": git_version(cfg["_root"]),
+        "source_fingerprint": source_fingerprint(cfg["_root"]),
         "config_fingerprint": config_fingerprint(cfg),
         "golden_set_sha": file_sha(golden_path),
         "prompt_version": pipe.prompt.version,
