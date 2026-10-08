@@ -19,7 +19,7 @@ if __name__ == "__main__":
     for name, rep in (("control", stable), ("drifted", drifted)):
         summary[name] = {"status": rep.status, "n_baseline": rep.n_baseline, "n_current": rep.n_current,
                          "psi": {f.name: round(f.psi, 3) for f in rep.features},
-                         "ks_p": {f.name: round(f.ks_p, 6) for f in rep.features if f.ks_p is not None},
+                         "ks_p": {f.name: float(f"{f.ks_p:.6g}") for f in rep.features if f.ks_p is not None},
                          "rates": {r.name: [round(r.baseline, 3), round(r.current, 3)] for r in rep.rates}}
     out.with_name("monitoring_summary.json").write_text(json.dumps(summary, indent=2))
     print(text)

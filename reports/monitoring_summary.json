@@ -37,8 +37,8 @@
       "topic_mix": 0.304
     },
     "ks_p": {
-      "retrieval_confidence": 0.0,
-      "query_length": 0.000218
+      "retrieval_confidence": 2.42249e-11,
+      "query_length": 0.000218307
     },
     "rates": {
       "abstained_rate": [
