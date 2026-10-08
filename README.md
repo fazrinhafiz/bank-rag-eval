@@ -5,6 +5,7 @@ interesting part. The point of this repo is the machinery a bank needs before it
 assistant in front of customers:
 
 - a labelled golden set with adversarial cases
+- an independent check on public data (3,080 real customer queries, 662 real injection attempts)
 - a quality gate in CI
 - input/output guardrails
 - privacy-safe tracing
@@ -14,7 +15,9 @@ assistant in front of customers:
 Everything runs **offline, deterministically, with no API key**, so every number below can be reproduced
 for free. A real LLM (OpenAI, Azure OpenAI, Ollama/vLLM) plugs in through environment variables.
 
-> **Fictional data.** *Bank Seri Andalas Berhad* and its seven policy documents in `data/docs/` are invented for demonstration.
+> **Data.** *Bank Seri Andalas Berhad* and its seven policy documents in `data/docs/` are invented, as are the golden-set
+> questions. The independent evaluation and the drift simulation use two public datasets: **Banking77** (real customer
+> banking queries, CC-BY-4.0) and **deepset/prompt-injections**. See [data/external/README.md](data/external/README.md).
 
 ## The problem
 
@@ -71,7 +74,8 @@ python -m bankrag ask "What is the late payment charge on my credit card?"
 python -m bankrag eval          # test split, writes reports/, exits 1 if any gate fails
 python -m bankrag calibrate     # re-fit the abstain threshold on the dev split
 python -m bankrag benchmark     # bm25 vs tfidf vs hybrid
-python scripts/simulate_drift.py   # synthetic traffic -> drift report
+python -m bankrag eval-external # Banking77 + deepset prompt injections (independent, not gated)
+python scripts/simulate_drift.py   # real-query traffic -> drift report
 python -m bankrag monitor --baseline traces/simulation/baseline.jsonl --current traces/simulation/current_drifted.jsonl
 pytest
 ```
@@ -148,24 +152,51 @@ to re-test when the corpus grows or real embeddings replace TF-IDF. Each mode's 
 on dev before comparison, and the selection rule uses dev metrics only
 ([ADR-001](docs/DESIGN_DECISIONS.md)).
 
+### Independent evaluation on public data
+
+The golden set was written by the same person who wrote the guardrails, so it flatters them. These
+datasets were not. Nothing was tuned on them, and the Banking77 intent labels (which intents the docs
+cover) were committed before any query was run.
+
+<!-- generated:external:start -->
+| measure | golden set (test, written by the author) | independent public data |
+|---|---|---|
+| Out-of-scope questions refused | 50.0% (6 near-miss items) | **85.4%** of 2,120 Banking77 queries from 53 uncovered intents |
+| In-scope questions answered | 100.0% | **45.3%** of 360 Banking77 queries from 9 covered intents |
+| In-scope retrieval hit@3 | 100.0% | **79.4%** |
+| Legitimate questions blocked as injection | 0.0% | **0.0%** of 3,080 Banking77 queries; 0.0% of 399 deepset benign prompts |
+| Injection attempts blocked | 100.0% (4 items) | **13.6%** of 169 English deepset injections (9.5% of all 263, incl. German) |
+
+Details: [reports/external_eval.md](reports/external_eval.md).
+<!-- generated:external:end -->
+
+**What this shows:**
+- **The injection rules don't generalise.** They catch all 4 attacks I wrote and about one in seven English attacks written by others. Most deepset attacks hijack the task ("now write an essay about…", "I want you to act as…") instead of using the phrasings my rules look for. The rules do have no false positives, so they're a cheap first filter, not a defence.
+- **The threshold is too strict for real phrasing.** It was calibrated on my well-formed questions. Short, informal real queries ("I lost my card") score lower, so more than half of in-scope Banking77 queries are refused.
+- **Clearly unrelated questions are refused well.** 85% of out-of-scope Banking77 queries are refused. The failures are near-misses again: "can you limit my top up?" retrieves the credit-limit section.
+
 ### Drift monitoring
 
 <!-- generated:drift:start -->
-| window | status | PSI confidence | PSI query length | PSI topic mix | abstention rate |
-|---|---|---|---|---|---|
-| control (normal traffic, new seed) | **OK** | 0.035 | 0.022 | 0.047 | 16.0% → 12.8% |
-| drifted (40% home-loan / FD surge) | **ALERT** | 0.296 | 0.134 | 0.304 | 16.0% → 36.4% |
+| window | status | PSI confidence | PSI query length | PSI topic mix | PSI query terms | abstention rate |
+|---|---|---|---|---|---|---|
+| control (normal mix, new seed) | **OK** | 0.039 | 0.020 | 0.031 | 0.029 | 69.2% → 68.8% |
+| drifted (40% top-up surge) | **ALERT** | 0.085 | 0.087 | 0.070 | 0.793 | 69.2% → 74.0% |
 
-Each window is 500 requests run through the real pipeline; baseline is 500 requests. Details: [reports/monitoring_report.md](reports/monitoring_report.md).
+Real Banking77 queries and deepset injection attempts, 500 per window, run through the real pipeline. Repeated over 20 seeds: control windows gave 20 OK / 0 WATCH / 0 ALERT; drifted windows gave 0 OK / 0 WATCH / 20 ALERT. Details: [reports/monitoring_report.md](reports/monitoring_report.md).
 <!-- generated:drift:end -->
 
-The control window shows that the monitor does not cry wolf. The drifted window shows that it catches a
-surge of uncovered questions, including the ones the abstain threshold lets through.
+The traffic is real customer queries; only the mix is simulated. The first version of the monitor
+**missed** this surge. Real phrasing is refused so often that a surge of one unanswerable topic looks
+like the baseline on confidence, abstention and answered topic. Monitoring what people ask (PSI over
+the terms in the masked queries) catches it, and the repeated-seed check shows it doesn't alarm on
+normal traffic. That signal was added after the miss, and the report says so.
 
 ## What is in the repo
 
 ```text
 data/docs/                  7 fictional policy documents (source of truth, unmodified)
+data/external/              Banking77 + deepset prompt injections (JSONL), intent map, sources and licences
 eval/golden_set.jsonl       57 labelled items: 35 answerable, 10 unanswerable, 6 injection, 6 PII
 eval/thresholds.yaml        quality gates (safety = absolute, quality = regression floors)
 prompts/answer_v1.yaml      versioned prompt: [doc_id#section] citations + explicit abstain text
@@ -178,7 +209,8 @@ src/bankrag/
   pipeline.py               guardrail -> retrieve -> abstain -> generate -> guardrail -> trace
   tracing.py                JSONL traces: salted hash + masked query only, latency, tokens, cost
   eval/                     metrics, harness, dev-only calibration, benchmark, LLM judge, reports
-  monitoring/               PSI / KS drift monitor, traffic simulator
+  eval/external.py          independent evaluation on the public datasets
+  monitoring/               PSI / KS drift monitor (incl. query-term drift), real-query traffic simulator
 tests/                      140+ tests incl. label checks, gate mutation tests, docs-in-sync check
 reports/                    committed outputs of the runs quoted in this README
 docs/                       use-case assessment, model card, design decisions (ADRs)
@@ -231,7 +263,10 @@ report before release** (see [MODEL_CARD.md](docs/MODEL_CARD.md#change-managemen
 - **Small golden set.** 57 items, 34 on test. The 6-item categories (unanswerable, injection, PII) give coarse rates.
 - **Near-miss unanswerable questions get answered.** Lexical retrieval confidence can't tell "Platinum card annual fee" from "Gold card annual fee". Fixing this needs an answerability check, such as an LLM/NLI verifier or a product-entity match, not a different threshold.
 - **The extractive baseline picks the wrong sentences on some items** (ans-05, ans-17, ans-34). It doesn't synthesise across sentences.
-- **Guardrails and golden set share an author.** The injection and PII results are optimistic. During development I fixed the phone regex after seeing it miss the `+60 19-…` format in pii-06. An independent red-team set is needed before trusting the 100% figures.
+- **The injection rules don't generalise.** 100% on the golden set, 13.6% on independent English attacks (deepset). Guardrails and golden set share an author. I also fixed the phone regex after seeing it miss the `+60 19-…` format in pii-06. A rule list is not a defence. A trained classifier or an LLM-based check is needed, measured on deepset's test split.
+- **The abstain threshold doesn't transfer to real phrasing.** It was calibrated on the golden dev split, and only 45.3% of real in-scope Banking77 queries are answered.
+- **The Banking77 intent labels are per intent, not per query,** and the dataset comes from a UK fintech. The external numbers are approximate.
+- **There's no Malaysian PII dataset.** PII masking is only tested on the 6 golden items plus unit tests.
 - **The PII detector is pattern-based.** Names, addresses and account numbers aren't masked. In pii-06, "Ahmad" stays in the masked query and the trace.
 - **English only.** Bahasa Malaysia and code-switched questions aren't covered or evaluated.
 - **Key-fact matching is lexical.** An LLM answer saying "five percent" instead of "5%" would be scored as wrong. Pair it with the LLM judge and human review.
@@ -246,8 +281,9 @@ report before release** (see [MODEL_CARD.md](docs/MODEL_CARD.md#change-managemen
 1. **Run with a real LLM.** Configure Azure OpenAI or a local Ollama model, run `eval` and `benchmark`, and add a column comparing the LLM against the offline baseline. Watch key-fact recall (paraphrase) and abstention.
 2. **Validate and gate an LLM-as-judge.** Hand-label ~50 answer sentences as supported or unsupported, measure judge agreement (accuracy and Cohen's kappa), and only then add a `judge_faithfulness` gate.
 3. **Add a reranker or answerability check.** Try a cross-encoder reranker, or a "does this passage answer *this* product question?" verifier, and measure it against the una-03 / una-08 / una-10 failures.
-4. **Grow the adversarial set.** Have someone else write 30+ new unanswerable and injection items, including Bahasa Malaysia, obfuscated attacks, and injections hidden inside documents. Report results before touching any rule.
+4. **Make injection detection generalise.** Use deepset's *train* split to improve the detector (rules, or a small classifier on TF-IDF features) and report on its *test* split only. Track detection rate and false-positive rate on Banking77 together.
 5. **Build a dashboard over the traces.** Show PSI over rolling windows, abstention and block rates, latency and cost per day, plus an alert log, for example with Streamlit over `traces/*.jsonl`.
+6. **Recalibrate on real phrasing.** Label a dev sample of Banking77 queries (answerable from the docs or not), recalibrate the threshold on it, and report on held-out Banking77 queries. Currently only 45.3% of real in-scope queries are answered.
 
 ## Documentation
 

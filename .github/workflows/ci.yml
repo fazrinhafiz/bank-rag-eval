@@ -33,6 +33,9 @@ jobs:
       - name: Quality gate - offline eval on the test split (fails the build if any gate fails)
         run: python -m bankrag eval
 
+      - name: Independent evaluation on Banking77 + deepset prompt injections (reported, not gated)
+        run: python -m bankrag eval-external > /dev/null
+
       - name: Drift monitor smoke test (control must be OK, surge must ALERT)
         run: python scripts/simulate_drift.py > /dev/null
 

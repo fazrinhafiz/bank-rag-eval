@@ -10,8 +10,8 @@ retrieval mode) is tuned on them. Re-create the files with `python scripts/fetch
 | `deepset_prompt_injections.jsonl` | **deepset/prompt-injections**, deepset GmbH. [Hugging Face](https://huggingface.co/datasets/deepset/prompt-injections) | Apache-2.0 per the dataset tags (its metadata also says CC-BY-4.0); both permissive | 662 (train + test) | independent test of the injection rules: detection rate and false-positive rate |
 
 Changes made: Banking77 rows are given ids (`b77-NNNN`) and kept verbatim. The deepset parquet files are
-converted to JSONL with an `is_injection` boolean and their original split; text is verbatim, and
-about 30% of it is German.
+converted to JSONL with an `is_injection` boolean and their original split; text is verbatim. Part of it is
+German; the heuristic count is in `reports/external_eval.md`.
 
 `banking77_intent_map.yaml` labels each of the 77 intents as **covered** by the knowledge base (with the
 doc ids that answer it), **ambiguous** (excluded from scoring) or **not covered**. It was committed before

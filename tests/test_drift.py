@@ -64,3 +64,24 @@ def test_monitor_flags_abstention_surge_and_stays_quiet_on_same_traffic():
     rep = monitor(base, drifted)
     assert rep.status == "ALERT"
     assert any(a.startswith("abstained_rate") for a in rep.alerts)
+
+
+def test_query_term_drift_catches_new_subject_but_not_resample():
+    from bankrag.monitoring.drift import term_psi
+
+    def t(q):
+        return {**_trace(0.5), "masked_query": q}
+
+    base = [t(q) for q in ["what is the annual fee", "how do I report fraud", "late payment charge"] * 60]
+    same = [t(q) for q in ["late payment charge", "what is the annual fee", "how do I report fraud"] * 60]
+    surge = base[:90] + [t("why did my top up fail") for _ in range(90)]
+    assert term_psi(base, same)[0] < 0.10
+    value, movers = term_psi(base, surge)
+    assert value > 0.25 and "top" in movers
+
+
+def test_query_terms_never_counts_pii_mask_placeholders():
+    from bankrag.monitoring.drift import query_terms
+
+    # the placeholders vanish; the real words "phone" and "email" are kept (stemmed)
+    assert query_terms([{"masked_query": "My IC is [NRIC] and phone [PHONE], email [EMAIL]"}]) == ["ic", "phon", "email"]

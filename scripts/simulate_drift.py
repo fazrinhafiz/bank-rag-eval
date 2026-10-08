@@ -12,7 +12,7 @@ from bankrag.config import load_config, resolve  # noqa: E402
 from bankrag.monitoring.simulate import main  # noqa: E402
 
 if __name__ == "__main__":
-    text, stable, drifted = main()
+    text, stable, drifted, repeated = main()
     out = resolve(load_config(), "reports_dir") / "monitoring_report.md"
     out.write_text(text)
     summary = {}
@@ -21,6 +21,7 @@ if __name__ == "__main__":
                          "psi": {f.name: round(f.psi, 3) for f in rep.features},
                          "ks_p": {f.name: float(f"{f.ks_p:.6g}") for f in rep.features if f.ks_p is not None},
                          "rates": {r.name: [round(r.baseline, 3), round(r.current, 3)] for r in rep.rates}}
+    summary["repeated"] = repeated
     out.with_name("monitoring_summary.json").write_text(json.dumps(summary, indent=2))
     print(text)
     print(f"control status: {stable.status}   drifted status: {drifted.status}\nwritten: {out}")

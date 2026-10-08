@@ -69,24 +69,45 @@ def benchmark_block(root: Path) -> str:
 
 def drift_block(root: Path) -> str:
     s = json.loads((root / "reports/monitoring_summary.json").read_text())
-    c, d = s["control"], s["drifted"]
-    lines = ["| window | status | PSI confidence | PSI query length | PSI topic mix | abstention rate |", "|---|---|---|---|---|---|"]
-    for name, w in (("control (normal traffic, new seed)", c), ("drifted (40% home-loan / FD surge)", d)):
+    c, d, rep = s["control"], s["drifted"], s["repeated"]
+    lines = ["| window | status | PSI confidence | PSI query length | PSI topic mix | PSI query terms | abstention rate |",
+             "|---|---|---|---|---|---|---|"]
+    for name, w in (("control (normal mix, new seed)", c), ("drifted (40% top-up surge)", d)):
         a = w["rates"]["abstained_rate"]
         lines.append(f"| {name} | **{w['status']}** | {w['psi']['retrieval_confidence']:.3f} | {w['psi']['query_length']:.3f} | "
-                     f"{w['psi']['topic_mix']:.3f} | {a[0]:.1%} → {a[1]:.1%} |")
-    lines += ["", f"Each window is {d['n_current']} requests run through the real pipeline; baseline is {d['n_baseline']} requests. "
+                     f"{w['psi']['topic_mix']:.3f} | {w['psi']['query_terms']:.3f} | {a[0]:.1%} → {a[1]:.1%} |")
+    rc, rd = rep["control"], rep["drifted"]
+    lines += ["", f"Real Banking77 queries and deepset injection attempts, {d['n_current']} per window, run through the real pipeline. "
+              f"Repeated over {rc['repeats']} seeds: control windows gave {rc['OK']} OK / {rc['WATCH']} WATCH / {rc['ALERT']} ALERT; "
+              f"drifted windows gave {rd['OK']} OK / {rd['WATCH']} WATCH / {rd['ALERT']} ALERT. "
               "Details: [reports/monitoring_report.md](reports/monitoring_report.md)."]
     return "\n".join(lines)
 
 
-BLOCKS = {"results": results_block, "benchmark": benchmark_block, "drift": drift_block}
+def external_block(root: Path) -> str:
+    x = json.loads((root / "reports/external_eval.json").read_text())
+    b, j = x["banking77"], x["injections"]
+    golden = json.loads((root / "reports/eval_report.json").read_text())["metrics"]
+    lines = ["| measure | golden set (test, written by the author) | independent public data |", "|---|---|---|",
+             f"| Out-of-scope questions refused | {golden['abstention_recall']:.1%} (6 near-miss items) | **{b['oos_abstention_rate']:.1%}** of {b['n_by_label']['not_covered']:,} Banking77 queries from {b['n_intents']['not_covered']} uncovered intents |",
+             f"| In-scope questions answered | {golden['answer_rate']:.1%} | **{b['in_scope_answer_rate']:.1%}** of {b['n_by_label']['covered']} Banking77 queries from {b['n_intents']['covered']} covered intents |",
+             f"| In-scope retrieval hit@3 | {golden['hit_at_3']:.1%} | **{b['in_scope_hit_at_3']:.1%}** |",
+             f"| Legitimate questions blocked as injection | {golden['false_block_rate']:.1%} | **{b['false_block_rate']:.1%}** of {b['n_queries']:,} Banking77 queries; {j['all']['false_positive_rate']:.1%} of {j['all']['n_benign']} deepset benign prompts |",
+             f"| Injection attempts blocked | {golden['injection_block_rate']:.1%} (4 items) | **{j['english']['detection_rate']:.1%}** of {j['english']['n_injection']} English deepset injections ({j['all']['detection_rate']:.1%} of all {j['all']['n_injection']}, incl. German) |",
+             "", "Details: [reports/external_eval.md](reports/external_eval.md)."]
+    return "\n".join(lines)
+
+
+BLOCKS = {"results": results_block, "benchmark": benchmark_block, "drift": drift_block, "external": external_block}
 DOCS = ("README.md", "docs/MODEL_CARD.md")
-_MARKER = re.compile(r"(<!-- generated:(\w+):start -->\n).*?(\n<!-- generated:\2:end -->)", re.S)
+_MARKER = re.compile(r"<!-- generated:(\w+):start -->\n(?:.*?\n)?<!-- generated:\1:end -->", re.S)
 
 
 def render(text: str, root: Path) -> str:
-    return _MARKER.sub(lambda m: m.group(1) + BLOCKS[m.group(2)](root) + m.group(3), text)
+    def block(m):
+        name = m.group(1)
+        return f"<!-- generated:{name}:start -->\n{BLOCKS[name](root)}\n<!-- generated:{name}:end -->"
+    return _MARKER.sub(block, text)
 
 
 def sync(root: Path, check: bool = False) -> list[str]:

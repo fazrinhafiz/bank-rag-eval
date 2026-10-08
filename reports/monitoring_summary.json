@@ -4,26 +4,27 @@
     "n_baseline": 500,
     "n_current": 500,
     "psi": {
-      "retrieval_confidence": 0.035,
-      "query_length": 0.022,
-      "topic_mix": 0.047
+      "retrieval_confidence": 0.039,
+      "query_length": 0.02,
+      "topic_mix": 0.031,
+      "query_terms": 0.029
     },
     "ks_p": {
-      "retrieval_confidence": 0.363562,
-      "query_length": 0.709091
+      "retrieval_confidence": 0.653049,
+      "query_length": 0.995412
     },
     "rates": {
       "abstained_rate": [
-        0.16,
-        0.128
+        0.692,
+        0.688
       ],
       "blocked_rate": [
-        0.02,
-        0.022
+        0.004,
+        0.004
       ],
       "pii_rate": [
-        0.168,
-        0.1
+        0.0,
+        0.0
       ]
     }
   },
@@ -32,27 +33,46 @@
     "n_baseline": 500,
     "n_current": 500,
     "psi": {
-      "retrieval_confidence": 0.296,
-      "query_length": 0.134,
-      "topic_mix": 0.304
+      "retrieval_confidence": 0.085,
+      "query_length": 0.087,
+      "topic_mix": 0.07,
+      "query_terms": 0.793
     },
     "ks_p": {
-      "retrieval_confidence": 2.42249e-11,
-      "query_length": 0.000218307
+      "retrieval_confidence": 0.034656,
+      "query_length": 0.0774203
     },
     "rates": {
       "abstained_rate": [
-        0.16,
-        0.364
+        0.692,
+        0.74
       ],
       "blocked_rate": [
-        0.02,
-        0.008
+        0.004,
+        0.002
       ],
       "pii_rate": [
-        0.168,
-        0.066
+        0.0,
+        0.0
       ]
+    }
+  },
+  "repeated": {
+    "control": {
+      "repeats": 20,
+      "OK": 20,
+      "WATCH": 0,
+      "ALERT": 0,
+      "query_terms_psi_min": 0.024,
+      "query_terms_psi_max": 0.084
+    },
+    "drifted": {
+      "repeats": 20,
+      "OK": 0,
+      "WATCH": 0,
+      "ALERT": 20,
+      "query_terms_psi_min": 0.521,
+      "query_terms_psi_max": 0.93
     }
   }
 }

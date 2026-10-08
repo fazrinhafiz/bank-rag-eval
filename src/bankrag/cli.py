@@ -138,6 +138,21 @@ def cmd_monitor(args) -> int:
     return 2 if (args.fail_on_alert and rep.status == "ALERT") else 0
 
 
+def cmd_eval_external(args) -> int:
+    from .eval.external import external_markdown, run_external
+
+    cfg = load_config(args.config)
+    res = run_external(cfg)
+    out = resolve(cfg, "reports_dir")
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "external_eval.json").write_text(json.dumps(res, indent=2))
+    text = external_markdown(res)
+    (out / "external_eval.md").write_text(text)
+    print(text)
+    print(f"written: {out / 'external_eval.md'}  (not gated)")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="bankrag", description=__doc__)
     parser.add_argument("--config", help="path to config.yaml (default: repo config or $BANKRAG_CONFIG)")
@@ -160,6 +175,9 @@ def build_parser() -> argparse.ArgumentParser:
 
     bench = sub.add_parser("benchmark", help="compare bm25 vs tfidf vs hybrid")
     bench.set_defaults(func=cmd_benchmark)
+
+    ext = sub.add_parser("eval-external", help="independent eval on Banking77 + deepset prompt injections (not gated)")
+    ext.set_defaults(func=cmd_eval_external)
 
     mon = sub.add_parser("monitor", help="PSI + KS drift check between two windows of traces")
     mon.add_argument("--baseline", help="baseline traces JSONL")

@@ -32,6 +32,7 @@ expectations on AI governance and technology risk.*
 ### Data
 - **Knowledge base:** 7 markdown policy documents, chunked one chunk per `##` section (50 chunks). Each chunk carries `doc_id` and section for citation.
 - **Evaluation data:** `eval/golden_set.jsonl`, 57 hand-written items (35 answerable, 10 unanswerable, 6 prompt-injection, 6 containing synthetic PII), split **dev 23 / test 34**. Key facts are verbatim from the documents and checked by tests.
+- **Independent evaluation data (not gated, never tuned on):** the Banking77 test split, 3,080 real customer banking queries (PolyAI, CC-BY-4.0), with each of its 77 intents labelled covered / ambiguous / not covered by the knowledge base before any query was run; and deepset/prompt-injections, 662 prompts labelled injection or benign, written by people other than the developer. Sources and licences: `data/external/README.md`.
 - **No training.** No model weights are trained. The only fitted parameters are the abstain threshold and the choice of retrieval mode, both fitted on **dev only**.
 - **Personal data:** customer queries may contain PII. It's masked before retrieval and generation, and only a salted hash plus the masked text are logged.
 
@@ -73,13 +74,30 @@ make the gate decision. Dev metrics are therefore optimistic. Test metrics are t
 ≈17 points on the 6-item categories. The results show the system works and catch regressions. They are
 not precise performance estimates.
 
+### Independent evaluation (not gated)
+
+<!-- generated:external:start -->
+| measure | golden set (test, written by the author) | independent public data |
+|---|---|---|
+| Out-of-scope questions refused | 50.0% (6 near-miss items) | **85.4%** of 2,120 Banking77 queries from 53 uncovered intents |
+| In-scope questions answered | 100.0% | **45.3%** of 360 Banking77 queries from 9 covered intents |
+| In-scope retrieval hit@3 | 100.0% | **79.4%** |
+| Legitimate questions blocked as injection | 0.0% | **0.0%** of 3,080 Banking77 queries; 0.0% of 399 deepset benign prompts |
+| Injection attempts blocked | 100.0% (4 items) | **13.6%** of 169 English deepset injections (9.5% of all 263, incl. German) |
+
+Details: [reports/external_eval.md](reports/external_eval.md).
+<!-- generated:external:end -->
+
+These results are the most important evidence in this card: they show the golden-set safety figures
+do not transfer to data written by other people (L4, L12).
+
 ### Limitations and known failure modes
 | # | limitation | evidence | consequence | mitigation / next step |
 |---|---|---|---|---|
 | L1 | Near-miss unanswerable questions are answered | una-03 (home loan), una-08 (Gold card), una-10 (SME loan) | Confident, cited answer about the **wrong product** | answerability verifier or product-entity check; monitoring of abstention / topic mix; human hand-off |
 | L2 | Extractive baseline selects the wrong sentences | ans-05, ans-17, ans-34 | Incomplete answers | LLM generator, measured against this baseline |
 | L3 | Faithfulness ≠ correctness | una-08 is 100% faithful and wrong | Faithfulness alone would pass bad answers | gate combines key facts, citation, abstention |
-| L4 | Guardrails written with sight of the golden set | phone regex fixed after pii-06 missed during development | 100% injection / PII figures are optimistic | independent red-team set before validation sign-off |
+| L4 | Injection rules do not generalise | 100% on the golden set but 13.6% of English deepset injections; rules were written with sight of the golden set (the phone regex was also fixed after pii-06 missed) | most real injection attempts reach retrieval and generation | trained classifier or LLM-based check, developed on deepset train and measured on deepset test; prompt and output guardrails remain the backstop |
 | L5 | Pattern-based PII only | names (pii-06 "Ahmad"), addresses, account numbers not masked | residual personal data in masked logs | NER-based detector; log retention limits |
 | L6 | Lexical key-fact matching | "five percent" ≠ "5%" | penalises paraphrasing LLMs | LLM judge validated against human labels |
 | L7 | English only | none of the golden set is Malay or code-switched | unknown behaviour on BM queries | add BM items and evaluate |
@@ -87,6 +105,7 @@ not precise performance estimates.
 | L9 | Gates set after seeing baseline test results | thresholds.yaml header | gates are regression floors, not independent targets | validator sets targets for the production LLM independently |
 | L10 | Document ambiguity not detected | DuitNow "unlimited free" vs RM5,000 free limit | possible partial answer | document owner review; conflict check at ingest |
 | L11 | Confidence is not a probability | normalised score, threshold calibrated | scores are not comparable across modes or corpus changes | re-calibrate on every corpus change; consider Platt / isotonic scaling |
+| L12 | Abstain threshold does not transfer to real phrasing | only 45.3% of covered Banking77 queries are answered (100% on the golden set) | many legitimate questions get a referral instead of an answer | recalibrate on a labelled dev sample of real queries |
 
 ---
 
@@ -107,7 +126,8 @@ What an independent validator (not the developer) should do before approval:
 |---|---|
 | Test-split quality gate passes | ✅ 12/12 gates (offline baseline) |
 | PII leak rate = 0 in eval and in 1,500 simulated traces | ✅ |
-| Independent red-team set evaluated | ❌ not yet (L4) |
+| Independent injection set evaluated | ⚠️ done (deepset): 13.6% English detection, not acceptable (L4) |
+| Real-query in-scope answer rate acceptable | ❌ 45.3% on Banking77 covered intents (L12) |
 | Abstention recall target agreed with the business and met | ❌ baseline at the 50% floor (L1) |
 | Production LLM evaluated with this harness | ❌ not yet. No real-LLM run has been made |
 | Human hand-off and monitoring operational | ❌ pilot prerequisite |
@@ -126,21 +146,24 @@ gates and documents that produced the results), conditions, next review date.
 | Retrieval confidence distribution | PSI (10 baseline-quantile bins) + KS test, baseline window vs current window | PSI ≥ 0.10 investigate · > 0.25 act |
 | Query length | PSI + KS | same bands |
 | Topic mix (answered top document, abstained, blocked) | categorical PSI | same bands |
+| Query terms (stemmed content terms of the PII-masked queries) | categorical PSI over the union of each window's 30 most frequent terms | same bands |
 | Abstention / block / PII-bearing rates | absolute change | ≥ 10 pp → alert |
 | Output PII leaks | output guardrail flag in traces | any → incident |
 | Latency, tokens, cost | per-stage trace fields | operational SLOs |
 | Answer quality | weekly sampled human review of answers + complaints tagged "assistant" | trend review |
 
-`python -m bankrag monitor --fail-on-alert` exits 2 on ALERT, for a scheduled job. The simulated drift
-scenario is evidence that the monitor works as designed:
+`python -m bankrag monitor --fail-on-alert` exits 2 on ALERT, for a scheduled job. The drift scenario
+replays real Banking77 queries with a simulated top-up surge. The first version of the monitor (without
+query terms) reported that surge as OK; the query-terms signal was added after that miss, and the
+repeated-seed check measures how it behaves on normal traffic:
 
 <!-- generated:drift:start -->
-| window | status | PSI confidence | PSI query length | PSI topic mix | abstention rate |
-|---|---|---|---|---|---|
-| control (normal traffic, new seed) | **OK** | 0.035 | 0.022 | 0.047 | 16.0% → 12.8% |
-| drifted (40% home-loan / FD surge) | **ALERT** | 0.296 | 0.134 | 0.304 | 16.0% → 36.4% |
+| window | status | PSI confidence | PSI query length | PSI topic mix | PSI query terms | abstention rate |
+|---|---|---|---|---|---|---|
+| control (normal mix, new seed) | **OK** | 0.039 | 0.020 | 0.031 | 0.029 | 69.2% → 68.8% |
+| drifted (40% top-up surge) | **ALERT** | 0.085 | 0.087 | 0.070 | 0.793 | 69.2% → 74.0% |
 
-Each window is 500 requests run through the real pipeline; baseline is 500 requests. Details: [reports/monitoring_report.md](reports/monitoring_report.md).
+Real Banking77 queries and deepset injection attempts, 500 per window, run through the real pipeline. Repeated over 20 seeds: control windows gave 20 OK / 0 WATCH / 0 ALERT; drifted windows gave 0 OK / 0 WATCH / 20 ALERT. Details: [reports/monitoring_report.md](reports/monitoring_report.md).
 <!-- generated:drift:end -->
 
 ## Change management

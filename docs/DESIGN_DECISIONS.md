@@ -89,3 +89,20 @@ one.
 
 **Revisit when** a validated need for account-specific actions appears. That would need a new use-case
 assessment at a higher risk tier, not a feature flag.
+
+## ADR-006: Public datasets as independent test sets, never for tuning
+
+**Context.** The golden set and the guardrails were written by the same person, so the golden-set safety
+numbers flatter the system. Real customer data can't be used in a public portfolio, and no public dataset
+pairs bank policy documents with questions and correct answers.
+
+**Decision.** Use two public datasets for what they can honestly measure, and only as test sets:
+- **Banking77** (3,080 real customer queries): out-of-scope refusal, in-scope answer rate and retrieval, false blocks, and real traffic for the drift simulation. Each of its 77 intents is labelled covered / ambiguous / not covered, and the label file was committed before any query was run.
+- **deepset/prompt-injections** (662 prompts): injection detection and false-positive rate.
+
+Results are reported but not gated. Nothing (rules, threshold, retrieval mode) is tuned on them.
+
+**Consequences.**
+- They exposed three things the golden set hid: the injection rules catch about one in seven independent English attacks; the threshold is too strict for real phrasing; and the first drift monitor missed a surge on real traffic. The fix for the last one, a query-terms signal, was made after seeing the miss, and the report says so.
+- To improve the injection detector or the threshold without fooling ourselves, the next step needs its own split: develop on deepset *train* or a labelled Banking77 dev sample, and report on held-out data.
+- The intent labels are per intent and the data comes from a UK fintech, so these numbers are approximate.

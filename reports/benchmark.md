@@ -10,6 +10,6 @@ the end-to-end columns are measured on the **test** split. Retrieval columns use
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | bm25 | 0.667 | 76.5% | 85.4% | 100.0% | 0.923 | 0.591 | 75.0% | 44.4% | 66.7% | 0.533 | 0.833 | 76.5% | 0.24 ms |
 | tfidf | 0.750 | 82.4% | 92.7% | 100.0% | 0.963 | 0.281 | 87.5% | 100.0% | 50.0% | 0.667 | 0.889 | 82.4% | 0.24 ms |
-| hybrid | 0.667 | 76.5% | 92.7% | 100.0% | 0.963 | 0.473 | 70.8% | 44.4% | 66.7% | 0.533 | 0.861 | 73.5% | 0.25 ms |
+| hybrid | 0.667 | 76.5% | 92.7% | 100.0% | 0.963 | 0.473 | 70.8% | 44.4% | 66.7% | 0.533 | 0.861 | 73.5% | 0.26 ms |
 
 Latency is wall-clock on the machine that ran the benchmark and varies run to run; all other columns are deterministic.

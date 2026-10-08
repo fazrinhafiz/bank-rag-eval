@@ -6,10 +6,17 @@ PSI bands (the convention used for credit-scorecard monitoring in banking):
 from __future__ import annotations
 
 import math
+import re
 from collections import Counter
 from dataclasses import dataclass, field
 
 import numpy as np
+
+from ..text import tokenize
+
+TOP_TERMS = 30
+# PII mask placeholders are removed before counting terms. [CARD] is kept: it reads as the real word "card".
+_MASKS = re.compile(r"\[(NRIC|PHONE|EMAIL)\]")
 
 EPS = 1e-4
 
@@ -53,6 +60,44 @@ def ks_2samp(a: list[float], b: list[float]) -> tuple[float, float]:
         return d, 1.0
     p = 2 * sum((-1) ** (k - 1) * math.exp(-2 * k * k * lam * lam) for k in range(1, 101))
     return d, float(min(max(p, 0.0), 1.0))
+
+
+def query_terms(traces: list[dict]) -> list[str]:
+    """Content terms of the PII-masked queries (stemmed, stopwords removed, mask placeholders dropped)."""
+    out = []
+    for t in traces:
+        out += tokenize(_MASKS.sub(" ", t.get("masked_query", "")))
+    return out
+
+
+def term_weights(traces: list[dict]) -> Counter:
+    """Each query contributes a total weight of 1, split evenly over its distinct terms, so a single long
+    prompt (e.g. a 300-word jailbreak) cannot outweigh hundreds of short customer questions."""
+    weights: Counter = Counter()
+    for t in traces:
+        terms = set(query_terms([t]))
+        for w in terms:
+            weights[w] += 1 / len(terms)
+    return weights
+
+
+def term_psi(baseline: list[dict], current: list[dict], top: int = TOP_TERMS) -> tuple[float, dict]:
+    """Categorical PSI over what people ask: the union of each window's `top` heaviest terms, with
+    everything else pooled as <other>. Catches a shift in subject even when the shifted traffic
+    looks like the baseline on confidence, abstention and answered topic."""
+    b, c = term_weights(baseline), term_weights(current)
+    keep = {w for w, _ in b.most_common(top)} | {w for w, _ in c.most_common(top)}
+    cats = sorted(keep) + ["<other>"]
+
+    def dist(weights: Counter) -> np.ndarray:
+        total = sum(weights.values()) or 1.0
+        shares = [weights.get(k, 0.0) / total for k in cats[:-1]]
+        return np.array(shares + [1 - sum(shares)])
+
+    e, a = dist(b), dist(c)
+    detail = {k: (float(x), float(y)) for k, x, y in zip(cats, e, a)}
+    movers = sorted(detail.items(), key=lambda kv: -abs(kv[1][1] - kv[1][0]))[:6]
+    return _psi(e, a), dict(movers)
 
 
 def topic(trace: dict) -> str:
@@ -124,6 +169,9 @@ def monitor(baseline: list[dict], current: list[dict]) -> MonitorReport:
         feats.append(FeatureDrift(name, value, psi_band(value), d, p))
     value, detail = psi_categorical([topic(t) for t in baseline], [topic(t) for t in current])
     feats.append(FeatureDrift("topic_mix", value, psi_band(value), detail=detail))
+    if all("masked_query" in t for t in baseline + current):
+        value, movers = term_psi(baseline, current)
+        feats.append(FeatureDrift("query_terms", value, psi_band(value), detail=movers))
 
     rate = lambda ts, key: sum(bool(t[key]) for t in ts) / len(ts)
     rates = []
@@ -148,6 +196,11 @@ def report_markdown(rep: MonitorReport, title: str) -> str:
     lines += ["", "Topic mix (share of traffic by answered top document; abstained/blocked shown separately):", "",
               "| topic | baseline | current |", "|---|---|---|"]
     lines += [f"| {k} | {b:.1%} | {c:.1%} |" for k, (b, c) in sorted(topic_mix.detail.items(), key=lambda kv: -kv[1][1])]
+    terms = next((f for f in rep.features if f.name == "query_terms"), None)
+    if terms:
+        lines += ["", "Query terms that moved most (share of all content terms, stemmed):", "",
+                  "| term | baseline | current |", "|---|---|---|"]
+        lines += [f"| {k} | {b:.1%} | {c:.1%} |" for k, (b, c) in terms.detail.items()]
     if rep.alerts:
         lines += ["", "Alerts:", *[f"- {a}" for a in rep.alerts]]
     return "\n".join(lines) + "\n"
