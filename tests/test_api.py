@@ -7,7 +7,7 @@ pytest.importorskip("fastapi")
 from fastapi.testclient import TestClient  # noqa: E402
 
 from bankrag.api import create_app  # noqa: E402
-from bankrag.config import load_config  # noqa: E402
+from bankrag.config import load_config, with_overrides  # noqa: E402
 from bankrag.logging_setup import JsonFormatter  # noqa: E402
 from bankrag.pipeline import Pipeline  # noqa: E402
 from bankrag.tracing import Tracer, read_traces  # noqa: E402
@@ -17,7 +17,7 @@ RAW_PII = ("900101-14-5678", "4539 1488 0343 6467")
 
 @pytest.fixture()
 def traced(tmp_path):
-    cfg = load_config()
+    cfg = with_overrides(load_config(), audit_db=str(tmp_path / "audit.db"))
     path = tmp_path / "traces.jsonl"
     client = TestClient(create_app(cfg, Pipeline(cfg, tracer=Tracer(path))))
     return client, path
@@ -80,7 +80,7 @@ def test_internal_error_returns_request_id_without_leaking_input(tmp_path, caplo
         def ask(self, question, request_id=None):
             raise RuntimeError(f"boom while handling {question}")
 
-    cfg = load_config()
+    cfg = with_overrides(load_config(), audit_db=str(tmp_path / "audit.db"))
     caplog.set_level(logging.INFO)
     client = TestClient(create_app(cfg, Broken(cfg, tracer=Tracer(None))), raise_server_exceptions=False)
     r = client.post("/ask", json={"question": f"my IC {RAW_PII[0]}"}, headers={"X-Request-ID": "err-1"})

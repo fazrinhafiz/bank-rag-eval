@@ -45,7 +45,7 @@ class Response:
 
 
 class Pipeline:
-    def __init__(self, cfg: dict | None = None, tracer: Tracer | None = None, generator=None):
+    def __init__(self, cfg: dict | None = None, tracer: Tracer | None = None, generator=None, audit=None):
         self.cfg = cfg or load_config()
         ch, rcfg = self.cfg["chunking"], self.cfg["retrieval"]
         self.chunks = load_corpus(resolve(self.cfg, "docs_dir"), ch["max_words"], ch["overlap_words"])
@@ -53,6 +53,7 @@ class Pipeline:
         self.prompt = Prompt.load(resolve(self.cfg, self.cfg["generation"]["prompt"]))
         self.generator = generator or make_generator(self.cfg, self.prompt)
         self.tracer = tracer if tracer is not None else Tracer(None)
+        self.audit = audit                    # bankrag.audit.AuditLog or None
         self.threshold = float(self.cfg["abstain_threshold"])
         self.top_k = int(rcfg["top_k"])
 
@@ -92,6 +93,10 @@ class Pipeline:
 
         resp.trace = self._trace(question, resp, timer, gen, request_id)
         self.tracer.write(resp.trace)
+        if self.audit is not None:
+            from .audit import rag_event
+            self.audit.append("rag_decision", rag_event(resp, self.retriever.mode), request_id=request_id,
+                              subject_id=resp.trace["trace_id"])
         # One line per decision. Never the question text: only ids, outcome and timings.
         log.info("decision", extra={"event": "decision", "trace_id": resp.trace["trace_id"], "reason": resp.reason,
                                     "abstained": resp.abstained, "blocked": resp.blocked,

@@ -9,3 +9,4 @@ traces/
 .env
 .DS_Store
 synthetic_docs/
+audit/

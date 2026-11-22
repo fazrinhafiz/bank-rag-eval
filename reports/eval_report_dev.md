@@ -8,8 +8,8 @@ Split **dev**, 23 items. ⚠️ This is not the test split, so the results are n
 
 | key | value |
 |---|---|
-| source_fingerprint | `d353b2c11a99` |
-| config_fingerprint | `7746de61a3d5` |
+| source_fingerprint | `9359713c6abb` |
+| config_fingerprint | `23773395ac63` |
 | golden_set_sha | `e571e0a4836a` |
 | prompt_version | `answer_v1` |
 | prompt_sha | `e2d650a856b3` |
@@ -80,8 +80,8 @@ Split **dev**, 23 items. ⚠️ This is not the test split, so the results are n
 
 | metric | value |
 |---|---|
-| end-to-end latency p50 | 0.35 ms |
-| end-to-end latency p95 | 0.44 ms |
+| end-to-end latency p50 | 0.37 ms |
+| end-to-end latency p95 | 0.45 ms |
 | mean tokens / request (estimated for offline) | 419 |
 | mean cost / request | $0.000000 |
 

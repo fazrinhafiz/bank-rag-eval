@@ -11,3 +11,5 @@ docs
 scripts
 data/external
 .env
+audit
+synthetic_docs

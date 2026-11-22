@@ -119,7 +119,20 @@ def docverify_block(root: Path) -> str:
     return "\n".join(lines)
 
 
-BLOCKS = {"results": results_block, "benchmark": benchmark_block, "drift": drift_block, "external": external_block,
+def audit_block(root: Path) -> str:
+    x = json.loads((root / "reports/audit_report.json").read_text())
+    lines = [f"A log of {x['clean_verify']['n_events']} events ({x['n_documents']} document decisions, {x['n_questions']} questions) "
+             f"verifies cleanly and contains {x['pii_values_found_in_db']} applicant names or NRICs. Attacks on copies of it:", "",
+             "| attack | detected | how |", "|---|---|---|"]
+    for r in x["attacks"]:
+        how = "append-only trigger" if r["blocked_by_trigger"] else (r["problem"] or "valid shorter chain")
+        mark = "yes" if r["detected"] else "**no** (expected: needs an anchor)"
+        lines.append(f"| {r['attack']} | {mark} | {how} |")
+    lines += ["", "Details and the SQL report tables: [reports/audit_report.md](reports/audit_report.md)."]
+    return "\n".join(lines)
+
+
+BLOCKS = {"results": results_block, "audit": audit_block, "benchmark": benchmark_block, "drift": drift_block, "external": external_block,
           "docverify": docverify_block}
 DOCS = ("README.md", "docs/MODEL_CARD.md")
 _MARKER = re.compile(r"<!-- generated:(\w+):start -->\n(?:.*?\n)?<!-- generated:\1:end -->", re.S)

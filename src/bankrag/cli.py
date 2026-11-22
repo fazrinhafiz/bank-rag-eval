@@ -1,4 +1,4 @@
-"""python -m bankrag {ask,eval,benchmark,calibrate,eval-external,monitor,doc-verify,doc-calibrate,doc-eval,doc-synth}"""
+"""python -m bankrag {ask,eval,benchmark,calibrate,eval-external,monitor,doc-verify,doc-calibrate,doc-eval,doc-synth,audit}"""
 from __future__ import annotations
 
 import argparse
@@ -226,6 +226,69 @@ def cmd_doc_synth(args) -> int:
     return 0
 
 
+def _audit(args):
+    from .audit import AuditLog
+    cfg = load_config(args.config)
+    path = Path(args.db) if args.db else resolve(cfg, "audit_db")
+    if not path.exists():
+        raise SystemExit(f"no audit database at {path}")
+    return cfg, AuditLog(path)
+
+
+def cmd_audit_verify(args) -> int:
+    _, audit = _audit(args)
+    anchor = None
+    if args.anchor:
+        seq, h = args.anchor.split(":", 1)
+        anchor = (int(seq), h)
+    res = audit.verify(anchor=anchor)
+    print(json.dumps(res.to_json(), indent=2))
+    if audit.keyed_with_dev_key:
+        print("warning: verified with the development key; set BANKRAG_AUDIT_KEY", file=sys.stderr)
+    print("AUDIT LOG VERIFIED" if res.ok else "AUDIT LOG TAMPERED OR CORRUPT")
+    return 0 if res.ok else 1
+
+
+def cmd_audit_head(args) -> int:
+    _, audit = _audit(args)
+    seq, h = audit.head()
+    print(f"{seq}:{h}")
+    return 0
+
+
+def cmd_audit_report(args) -> int:
+    from .audit_report import report
+    cfg, audit = _audit(args)
+    print(report(audit, Path(cfg["_root"])))
+    return 0
+
+
+def cmd_audit_query(args) -> int:
+    from .audit_report import markdown_table
+    _, audit = _audit(args)
+    params = dict(p.split("=", 1) for p in args.param)
+    cols, rows = audit.query(Path(args.sql).read_text(), params)
+    print(markdown_table(cols, rows, limit=args.limit))
+    return 0
+
+
+def cmd_audit_demo(args) -> int:
+    from .audit_report import demo, demo_markdown
+    cfg = load_config(args.config)
+    d = demo(cfg)
+    out = resolve(cfg, "reports_dir")
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "audit_report.md").write_text(demo_markdown(d))
+    (out / "audit_report.json").write_text(json.dumps({k: v for k, v in d.items() if k != "report_tables"}, indent=2) + "\n")
+    print(f"clean log verifies: {d['clean_verify']['ok']} ({d['clean_verify']['n_events']} events); "
+          f"PII values in db: {d['pii_values_found_in_db']}")
+    for r in d["attacks"]:
+        print(f"  [{'ok' if r['as_expected'] else 'FAIL'}] {r['attack']:<42} detected={r['detected']}")
+    print(f"  report: {out / 'audit_report.md'}")
+    print("AUDIT DEMO PASSED" if d["passed"] else "AUDIT DEMO FAILED")
+    return 0 if d["passed"] else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="bankrag", description=__doc__)
     parser.add_argument("--config", help="path to config.yaml (default: repo config or $BANKRAG_CONFIG)")
@@ -279,6 +342,25 @@ def build_parser() -> argparse.ArgumentParser:
     ds.add_argument("--out", default="synthetic_docs")
     ds.add_argument("--limit", type=int)
     ds.set_defaults(func=cmd_doc_synth)
+
+    au = sub.add_parser("audit", help="tamper-evident audit log: verify, head, report, query, demo")
+    asub = au.add_subparsers(dest="audit_command", required=True)
+    for name, func, text in (("verify", cmd_audit_verify, "walk the hash chain; exit 1 if tampered"),
+                             ("head", cmd_audit_head, "print the latest seq:hash, to export as an anchor"),
+                             ("report", cmd_audit_report, "run every parameter-free query in sql/")):
+        p = asub.add_parser(name, help=text)
+        p.add_argument("--db", help="audit database (default: config audit_db)")
+        p.set_defaults(func=func)
+        if name == "verify":
+            p.add_argument("--anchor", help="seq:hash exported earlier by `audit head`; detects removed events")
+    q = asub.add_parser("query", help="run one SQL file, e.g. sql/lookup_request.sql --param id=APP-1")
+    q.add_argument("sql")
+    q.add_argument("--param", action="append", default=[], help="name=value for :name placeholders")
+    q.add_argument("--limit", type=int, default=50)
+    q.add_argument("--db")
+    q.set_defaults(func=cmd_audit_query)
+    d = asub.add_parser("demo", help="build a log from the test corpus, attack copies of it, write reports/audit_report.md")
+    d.set_defaults(func=cmd_audit_demo)
     return parser
 
 

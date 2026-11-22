@@ -8,7 +8,7 @@ PORT=${PORT:-8000}
 
 docker build -t "$IMAGE" .
 docker rm -f "$NAME" >/dev/null 2>&1 || true
-docker run -d --name "$NAME" -p "$PORT:8000" -e BANKRAG_TRACE_SALT=smoke-test-salt "$IMAGE" >/dev/null
+docker run -d --name "$NAME" -p "$PORT:8000" -e BANKRAG_TRACE_SALT=smoke-test-salt -e BANKRAG_AUDIT_KEY=smoke-audit-key "$IMAGE" >/dev/null
 cleanup() {
   status=$?
   if [ "$status" -ne 0 ]; then echo "--- container logs (smoke test failed)"; docker logs "$NAME" 2>&1 | tail -50 || true; fi
@@ -53,3 +53,9 @@ nric=$(python3 -c "import json; print(json.load(open('docs/samples/samples.json'
 if echo "$logs" | grep -q "$nric"; then echo "FAIL applicant NRIC from a document found in container logs"; exit 1; fi
 echo "ok   no document NRIC in container logs"
 echo "ok   no raw PII in trace file"
+docker exec "$NAME" python -m bankrag audit verify >/dev/null && echo "ok   audit log verifies inside the container"
+seq=$(docker exec "$NAME" python -m bankrag audit head | cut -d: -f1)
+expected=$(python3 -c "import json; print(2 + len(json.load(open('docs/samples/samples.json'))))")   # 2 /ask + 1 per document
+if [ "$seq" -ne "$expected" ]; then echo "FAIL expected $expected audit events, found $seq"; exit 1; fi
+if docker exec "$NAME" sh -c "grep -q -e 900101 -e \"$nric\" /app/audit/audit.db*"; then echo "FAIL raw NRIC in audit database"; exit 1; fi
+echo "ok   $seq audit events, no raw NRIC in the audit database"

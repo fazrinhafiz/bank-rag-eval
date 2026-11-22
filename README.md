@@ -110,8 +110,8 @@ pip install -e ".[api]"
 uvicorn bankrag.api:create_app --factory --port 8000     # OpenAPI docs at http://localhost:8000/docs
 
 docker build -t bankrag .
-docker run -p 8000:8000 -e BANKRAG_TRACE_SALT=<from your secret store> bankrag
-bash scripts/container_smoke_test.sh                     # build + run + 9 behaviour checks (also runs in CI)
+docker run -p 8000:8000 -e BANKRAG_TRACE_SALT=<secret> -e BANKRAG_AUDIT_KEY=<secret> -v bankrag-audit:/app/audit bankrag
+bash scripts/container_smoke_test.sh                     # build + run + 11 behaviour checks (also runs in CI)
 ```
 
 ```text
@@ -124,7 +124,7 @@ $ curl -s -H 'X-Request-ID: case-42' -H 'content-type: application/json' \
 
 | endpoint | purpose |
 |---|---|
-| `GET /health` | liveness, plus the versions behind every answer: `source_fingerprint`, retrieval mode, provider, prompt version, threshold |
+| `GET /health` | liveness, plus the versions behind every answer: `source_fingerprint`, retrieval mode, provider, prompt version, threshold, audit log length |
 | `POST /ask` | one question through the guarded pipeline; returns the outcome (`answered` / `abstained` / `blocked`), the reason code and citations |
 | `POST /documents/verify` | a base64 PDF plus its application; returns `auto_accept` / `manual_review` / `reject`, the reasons, findings and extracted fields (NRIC masked) |
 
@@ -133,7 +133,7 @@ $ curl -s -H 'X-Request-ID: case-42' -H 'content-type: application/json' \
 - **Logs are JSON, one object per line on stdout,** so any collector can ingest them. They contain IDs, outcomes, reason codes and timings, never the question text: the trace keeps only the PII-masked query. On an unhandled error the caller gets `{"error": "internal_error", "request_id": ...}` and the log records only the exception *type*, because messages and tracebacks can echo input.
 - **The container is small and safe by default:** `python:3.12-slim`, runs as uid 10001, has a Docker `HEALTHCHECK`, and no secrets are baked in (`BANKRAG_TRACE_SALT` comes from the environment).
 - **A running container can be tied to its evidence.** `/health` reports the same `source_fingerprint` as the eval reports it was gated on.
-- **CI checks the real artifact.** A `container` job builds the image and runs `scripts/container_smoke_test.sh`: health, a cited answer, an injection blocked, the six sample documents in `docs/samples/` getting their expected decisions, non-root user, request ID in the JSON logs, and no raw NRIC in the logs or trace file. This smoke test caught a config-path bug that only appears in a non-editable install, which unit tests can't see.
+- **CI checks the real artifact.** A `container` job builds the image and runs `scripts/container_smoke_test.sh`: health, a cited answer, an injection blocked, the six sample documents in `docs/samples/` getting their expected decisions, non-root user, request ID in the JSON logs, no raw NRIC in the logs, trace file or audit database, and the audit log verifying inside the container. This smoke test caught a config-path bug that only appears in a non-editable install, which unit tests can't see.
 
 ## Document intake and tamper detection
 
@@ -213,6 +213,43 @@ it was written to do, because I wrote both the forgeries and the checks. The inf
 - **Process disclosure.** My first anomaly model (IsolationForest on ratios) caught none of them on dev or test. The redesign used dev only, and the gates were written before the final test run.
 - **The genuine documents sent to review** are mostly legitimately shortened names, which is the right call.
 - **Extraction is exact even on the two held-out layouts.** That's expected for text-layer PDFs and says nothing about scans, which have no text layer and go to manual review.
+
+## Audit trail
+
+Every decision the system makes, whether an answer, an abstention, a block or a document verdict, is written to
+an audit log **before** the response is returned. If the write fails, the caller gets a 500, not an
+unrecorded decision. The log answers what a complaint, an auditor or the regulator will ask: *what did the
+system decide for this customer, why, and under which rules, prompt and model version?*
+
+```bash
+python -m bankrag audit verify                      # walk the chain; exit 1 if anything was altered
+python -m bankrag audit head                        # latest seq:hash, to export as an anchor
+python -m bankrag audit verify --anchor SEQ:HASH  # also detects events removed from the end
+python -m bankrag audit report                      # every report query in sql/, as markdown
+python -m bankrag audit query sql/lookup_request.sql --param id=APP-test-0201
+python -m bankrag audit demo                        # build a log, attack copies of it (runs in CI)
+```
+
+**How it's protected:**
+- **Append-only.** SQLite triggers refuse `UPDATE` and `DELETE`, and reopening the log re-creates any trigger that was dropped.
+- **Chained and keyed.** Each event's hash covers the previous hash and the event, keyed with `BANKRAG_AUDIT_KEY` (HMAC-SHA256). Editing, deleting or reordering an event breaks verification at that exact event, and the chain can't be recomputed without the key.
+- **Anchored.** A shorter chain is still a valid chain, so `audit head` exports the latest `seq:hash` to write-once storage, and `verify --anchor` checks against it.
+- **No personal data.** Events hold ids, outcomes, reason codes, rule and prompt versions, file hashes and salted query hashes. They never hold question text, names, NRICs or amounts. The duplicate registry lives in the same database and compares applicants by a salted hash of their NRIC.
+
+<!-- generated:audit:start -->
+A log of 384 events (350 document decisions, 34 questions) verifies cleanly and contains 0 applicant names or NRICs. Attacks on copies of it:
+
+| attack | detected | how |
+|---|---|---|
+| UPDATE through SQL | yes | append-only trigger |
+| Edit after dropping triggers | yes | hash mismatch: event content changed or chain re-keyed |
+| Delete an event | yes | sequence gap: expected 201, found 202 |
+| Edit and recompute the chain | yes | hash mismatch: event content changed or chain re-keyed |
+| Truncate the last 10 events | **no** (expected: needs an anchor) | valid shorter chain |
+| Truncate the last 10 events, anchored | yes | log ends at 374 but the anchor is at 384: events removed |
+
+Details and the SQL report tables: [reports/audit_report.md](reports/audit_report.md).
+<!-- generated:audit:end -->
 
 ## Results
 
@@ -327,18 +364,21 @@ src/bankrag/
   generators.py             OfflineExtractive baseline + OpenAI / Azure / Ollama-compatible client
   pipeline.py               guardrail -> retrieve -> abstain -> generate -> guardrail -> trace
   tracing.py                JSONL traces: salted hash + masked query only, latency, tokens, cost
-  api.py                    FastAPI service: /health, /ask, request ids, error handling
+  api.py                    FastAPI service: /health, /ask, /documents/verify, request ids, error handling
+  audit.py                  append-only, HMAC hash-chained audit log in SQLite; verify, head, anchors
+  audit_report.py           SQL reports over the log and the tamper demonstration
   logging_setup.py          JSON logs with the request id stamped on every record
   eval/                     metrics, harness, dev-only calibration, benchmark, LLM judge, reports
   eval/external.py          independent evaluation on the public datasets
   monitoring/               PSI / KS drift monitor (incl. query-term drift), real-query traffic simulator
   docverify/                document intake: synthetic corpus, PDF extraction, checks, forensics, anomaly model,
                             duplicate registry, rule engine, verifier, optional LLM extractor, evaluation
-tests/                      220+ tests incl. label checks, gate mutation tests, API tests, docs-in-sync check
+tests/                      220+ tests incl. audit-tamper tests, label checks, gate mutation tests, API tests, docs-in-sync check
 Dockerfile                  non-root API image; scripts/container_smoke_test.sh checks it end to end
 reports/                    committed outputs of the runs quoted in this README
 docs/                       use-case assessment, model card, design decisions (ADRs)
 docs/samples/               six synthetic documents (genuine and tampered) with their expected decisions
+sql/                        reporting queries over the audit log (decisions, review queue, shared documents, versions)
 ```
 
 ## Testing the tests
@@ -403,7 +443,7 @@ report before release** (see [MODEL_CARD.md](docs/MODEL_CARD.md#change-managemen
 - **Single-turn only.** No authentication, personalisation or conversation memory.
 - **Document verification is evaluated on synthetic documents only,** with tampering written by the checks' author. See *What the numbers say* above and the limitations in [reports/docverify_report.md](reports/docverify_report.md).
 - **The document checks need a text layer.** Scans and phone photos go to manual review because OCR isn't implemented. The forensic checks are easy to evade once known.
-- **The duplicate registry is in memory.** It resets when the service restarts, and it isn't shared between replicas.
+- **The audit log is a single SQLite file.** That's fine for one host with several workers (writes are serialised), but replicas on different hosts would need a shared database such as Postgres with the same schema and chain. The duplicate check is atomic within a process, not across processes.
 
 ## Next steps (good first issues)
 
@@ -412,9 +452,10 @@ report before release** (see [MODEL_CARD.md](docs/MODEL_CARD.md#change-managemen
 3. **Add a reranker or answerability check.** Try a cross-encoder reranker, or a "does this passage answer *this* product question?" verifier, and measure it against the una-03 / una-08 / una-10 failures.
 4. **Make injection detection generalise.** Use deepset's *train* split to improve the detector (rules, or a small classifier on TF-IDF features) and report on its *test* split only. Track detection rate and false-positive rate on Banking77 together.
 5. **Build a dashboard over the traces.** Show PSI over rolling windows, abstention and block rates, latency and cost per day, plus an alert log, for example with Streamlit over `traces/*.jsonl`.
-6. **Reconcile documents against each other.** Match the salary credit on the bank statement against the payslip's net pay and employer. This is the check that catches the consistent statement forgeries the anomaly score misses.
-7. **Add OCR for scanned documents** (Tesseract or a document-AI service), and evaluate it on a labelled public receipt or form dataset after checking its licence.
-8. **Recalibrate on real phrasing.** Label a dev sample of Banking77 queries (answerable from the docs or not), recalibrate the threshold on it, and report on held-out Banking77 queries. Currently only 45.3% of real in-scope queries are answered.
+6. **Record the human decision.** Add a reviewer endpoint that appends `review_decision` events (reviewer id, outcome, reason) to the same chain, so manual-review outcomes can be measured against the machine's findings.
+7. **Reconcile documents against each other.** Match the salary credit on the bank statement against the payslip's net pay and employer. This is the check that catches the consistent statement forgeries the anomaly score misses.
+8. **Add OCR for scanned documents** (Tesseract or a document-AI service), and evaluate it on a labelled public receipt or form dataset after checking its licence.
+9. **Recalibrate on real phrasing.** Label a dev sample of Banking77 queries (answerable from the docs or not), recalibrate the threshold on it, and report on held-out Banking77 queries. Currently only 45.3% of real in-scope queries are answered.
 
 ## Documentation
 

@@ -1,0 +1,86 @@
+{
+  "source_fingerprint": "9359713c6abb",
+  "n_documents": 350,
+  "n_questions": 34,
+  "clean_verify": {
+    "ok": true,
+    "n_events": 384,
+    "problem": null
+  },
+  "pii_values_found_in_db": 0,
+  "attacks": [
+    {
+      "attack": "UPDATE through SQL",
+      "what": "change event 201 from reject to auto_accept with a plain UPDATE",
+      "blocked_by_trigger": "audit_events is append-only",
+      "verify_ok": true,
+      "first_bad_seq": null,
+      "problem": null,
+      "detected": true,
+      "expected_detected": true,
+      "as_expected": true,
+      "with_anchor": false
+    },
+    {
+      "attack": "Edit after dropping triggers",
+      "what": "same change to event 201, triggers dropped first",
+      "blocked_by_trigger": null,
+      "verify_ok": false,
+      "first_bad_seq": 201,
+      "problem": "hash mismatch: event content changed or chain re-keyed",
+      "detected": true,
+      "expected_detected": true,
+      "as_expected": true,
+      "with_anchor": false
+    },
+    {
+      "attack": "Delete an event",
+      "what": "remove event 201 entirely",
+      "blocked_by_trigger": null,
+      "verify_ok": false,
+      "first_bad_seq": 201,
+      "problem": "sequence gap: expected 201, found 202",
+      "detected": true,
+      "expected_detected": true,
+      "as_expected": true,
+      "with_anchor": false
+    },
+    {
+      "attack": "Edit and recompute the chain",
+      "what": "change event 201, then recompute every later hash without the key",
+      "blocked_by_trigger": null,
+      "verify_ok": false,
+      "first_bad_seq": 201,
+      "problem": "hash mismatch: event content changed or chain re-keyed",
+      "detected": true,
+      "expected_detected": true,
+      "as_expected": true,
+      "with_anchor": false
+    },
+    {
+      "attack": "Truncate the last 10 events",
+      "what": "delete the newest events; the shorter chain is still internally valid",
+      "blocked_by_trigger": null,
+      "verify_ok": true,
+      "first_bad_seq": null,
+      "problem": null,
+      "detected": false,
+      "expected_detected": false,
+      "as_expected": true,
+      "with_anchor": false
+    },
+    {
+      "attack": "Truncate the last 10 events, anchored",
+      "what": "same, verified against the exported head (seq, hash)",
+      "blocked_by_trigger": null,
+      "verify_ok": false,
+      "first_bad_seq": 375,
+      "problem": "log ends at 374 but the anchor is at 384: events removed",
+      "detected": true,
+      "expected_detected": true,
+      "as_expected": true,
+      "with_anchor": true
+    }
+  ],
+  "passed": true
+}

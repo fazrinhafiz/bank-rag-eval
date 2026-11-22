@@ -1,6 +1,6 @@
 # bankrag API image: small, non-root, no secrets baked in.
 #   docker build -t bankrag .
-#   docker run -p 8000:8000 -e BANKRAG_TRACE_SALT=<from your secret store> bankrag
+#   docker run -p 8000:8000 -e BANKRAG_TRACE_SALT=<secret> -e BANKRAG_AUDIT_KEY=<secret> -v bankrag-audit:/app/audit bankrag
 FROM python:3.12-slim
 
 ENV PYTHONDONTWRITEBYTECODE=1 \
@@ -22,10 +22,12 @@ COPY config.yaml ./
 COPY prompts ./prompts
 COPY data/docs ./data/docs
 COPY rules ./rules
+COPY sql ./sql
 COPY data/docverify ./data/docverify
 COPY eval/golden_set.jsonl eval/thresholds.yaml eval/docverify_thresholds.yaml ./eval/
 
-RUN useradd --create-home --uid 10001 app && mkdir -p /app/traces && chown app /app/traces
+# traces/ and audit/ are the only writable paths; mount a volume on /app/audit so the log outlives the container.
+RUN useradd --create-home --uid 10001 app && mkdir -p /app/traces /app/audit && chown app /app/traces /app/audit
 USER 10001
 
 EXPOSE 8000

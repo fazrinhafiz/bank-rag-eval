@@ -6,6 +6,7 @@ golden_set: eval/golden_set.jsonl
 thresholds: eval/thresholds.yaml
 reports_dir: reports
 trace_path: traces/traces.jsonl
+audit_db: audit/audit.db   # hash-chained audit log + duplicate registry (key: env BANKRAG_AUDIT_KEY)
 
 chunking:
   max_words: 120        # sections longer than this are split into overlapping windows

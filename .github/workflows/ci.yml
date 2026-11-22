@@ -36,6 +36,9 @@ jobs:
       - name: Document verification gate - synthetic payslips and statements, test split (fails the build if any gate fails)
         run: python -m bankrag doc-eval
 
+      - name: Audit trail - build a log, attack copies of it, every attack must be caught
+        run: python -m bankrag audit demo
+
       - name: Independent evaluation on Banking77 + deepset prompt injections (reported, not gated)
         run: python -m bankrag eval-external > /dev/null
 

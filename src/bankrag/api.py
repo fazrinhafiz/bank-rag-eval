@@ -27,6 +27,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, Field
 
 from . import __version__
+from .audit import AuditLog
 from .config import load_config, resolve
 from .eval.harness import source_fingerprint
 from .logging_setup import configure_logging, request_id_var
@@ -87,14 +88,18 @@ class Health(BaseModel):
     provider: str
     prompt_version: str
     abstain_threshold: float
+    audit_head_seq: int | None = Field(default=None, description="Events in the audit log (None if disabled).")
 
 
 def create_app(cfg: dict | None = None, pipeline: Pipeline | None = None) -> FastAPI:
     configure_logging()
     cfg = cfg or load_config()
-    pipe = pipeline or Pipeline(cfg, tracer=Tracer(resolve(cfg, "trace_path")))
+    audit = AuditLog(resolve(cfg, "audit_db")) if cfg.get("audit_db") else None
+    if audit is not None and audit.keyed_with_dev_key:
+        log.warning("audit log uses the development key", extra={"event": "config_warning", "setting": "BANKRAG_AUDIT_KEY"})
+    pipe = pipeline or Pipeline(cfg, tracer=Tracer(resolve(cfg, "trace_path")), audit=audit)
     fingerprint = source_fingerprint(cfg["_root"])
-    verifier = _document_verifier(cfg)
+    verifier = _document_verifier(cfg, audit)
     max_bytes = int(cfg.get("docverify", {}).get("max_upload_mb", 5) * 1024 * 1024)
     app = FastAPI(title="bankrag", version=__version__,
                   description="Guarded policy Q&A for the fictional Bank Seri Andalas Berhad.")
@@ -120,7 +125,8 @@ def create_app(cfg: dict | None = None, pipeline: Pipeline | None = None) -> Fas
     @app.get("/health", response_model=Health)
     def health() -> Health:
         return Health(status="ok", version=__version__, source_fingerprint=fingerprint, retrieval_mode=pipe.retriever.mode,
-                      provider=pipe.generator.provider, prompt_version=pipe.prompt.version, abstain_threshold=pipe.threshold)
+                      provider=pipe.generator.provider, prompt_version=pipe.prompt.version, abstain_threshold=pipe.threshold,
+                      audit_head_seq=None if audit is None else audit.head()[0])
 
     @app.post("/ask", response_model=AskResponse)
     def ask(body: AskRequest) -> AskResponse:
@@ -143,14 +149,14 @@ def create_app(cfg: dict | None = None, pipeline: Pipeline | None = None) -> Fas
             raise HTTPException(422, "document_base64 is not valid base64")
         app_data = body.application.model_dump()
         app_data["application_date"] = body.application.application_date.isoformat()
-        verdict = verifier.verify(pdf, app_data)
+        verdict = verifier.verify(pdf, app_data, request_id=request_id_var.get())
         body_out = {k: v for k, v in verdict.to_json().items() if k != "checks_run"}
         return VerifyResponse(request_id=request_id_var.get(), **body_out)
 
     return app
 
 
-def _document_verifier(cfg: dict):
+def _document_verifier(cfg: dict, audit=None):
     """None when the optional `docs` extra (pypdf) or its config is missing; /documents/verify then answers 503."""
     if "docverify" not in cfg:
         return None
@@ -159,4 +165,4 @@ def _document_verifier(cfg: dict):
     except ImportError:
         return None
     from .docverify.verify import DocumentVerifier
-    return DocumentVerifier(cfg)
+    return DocumentVerifier(cfg, audit=audit)

@@ -18,7 +18,7 @@ from . import checks, nric
 from .anomaly import AnomalyModel
 from .checks import Finding
 from .extract import Extraction, extract, read_pdf
-from .registry import SubmissionRegistry
+from .registry import SqliteRegistry, SubmissionRegistry, registry_keys
 from .rules import RuleSet
 
 log = logging.getLogger("bankrag.docverify")
@@ -70,11 +70,15 @@ def validate_application(app: dict) -> list[str]:
 
 class DocumentVerifier:
     def __init__(self, cfg: dict, rules: RuleSet | None = None, registry: SubmissionRegistry | None = None,
-                 anomaly: AnomalyModel | None | bool = True, extractor=None, disabled: set[str] = frozenset()):
+                 anomaly: AnomalyModel | None | bool = True, extractor=None, disabled: set[str] = frozenset(),
+                 audit=None):
         dv = cfg["docverify"]
         self.rules = rules or RuleSet.load(resolve(cfg, dv["rules"]))
         self.settings = self.rules.settings
-        self.registry = registry if registry is not None else SubmissionRegistry()
+        self.audit = audit                    # bankrag.audit.AuditLog: decisions + persistent registry
+        if registry is None:
+            registry = SqliteRegistry(audit) if audit is not None else SubmissionRegistry()
+        self.registry = registry
         if anomaly is True:
             anomaly = AnomalyModel.load(resolve(cfg, dv["anomaly_model"])) if self.settings.get("anomaly", True) else None
         self.anomaly = anomaly or None
@@ -90,7 +94,7 @@ class DocumentVerifier:
         result = self.extractor(facts)
         return result if result is not None else Extraction(extract(facts).doc_type, {}, ["llm_extraction_failed"], "llm")
 
-    def verify(self, pdf: bytes, application: dict) -> Verdict:
+    def verify(self, pdf: bytes, application: dict, request_id: str | None = None) -> Verdict:
         start = time.perf_counter()
         errors = validate_application(application)
         if errors:
@@ -139,6 +143,11 @@ class DocumentVerifier:
         decision = self.rules.decide(findings)
         verdict = Verdict(decision.decision, decision.reasons, findings, ex.doc_type, ex.fields, ex.missing, score, thr,
                           facts.sha256, self.rules.version, ex.method, round((time.perf_counter() - start) * 1000, 2), ran)
+        if self.audit is not None:
+            from ..audit import document_event
+            self.audit.append("document_decision", document_event(verdict, application["application_id"],
+                              registry_keys(ex.doc_type, ex.fields, facts.sha256)),
+                              request_id=request_id, subject_id=application["application_id"])
         # Never log field values: they are personal data. Codes and the decision are enough to investigate.
         log.info("document decision", extra={"event": "doc_decision", "application_id": application["application_id"],
                                              "doc_type": verdict.doc_type, "decision": verdict.decision,
