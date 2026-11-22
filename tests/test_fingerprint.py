@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def _copy(tmp_path):
-    for rel in ("src", "config.yaml", "prompts", "eval", "data"):
+    for rel in ("src", "config.yaml", "prompts", "eval", "data", "rules"):
         src, dst = ROOT / rel, tmp_path / rel
         shutil.copytree(src, dst, ignore=shutil.ignore_patterns("__pycache__", "*.egg-info")) if src.is_dir() else shutil.copy(src, dst)
     return tmp_path
@@ -24,7 +24,8 @@ def test_fingerprint_is_stable_and_ignores_reports(tmp_path):
 def test_fingerprint_changes_when_code_config_or_docs_change(tmp_path):
     root = _copy(tmp_path)
     base = source_fingerprint(root)
-    for rel in ("config.yaml", "src/bankrag/pipeline.py", "data/docs/credit-card.md", "eval/thresholds.yaml"):
+    for rel in ("config.yaml", "src/bankrag/pipeline.py", "data/docs/credit-card.md", "eval/thresholds.yaml",
+                "rules/document_rules.yaml", "data/docverify/anomaly_model.json"):
         path = root / rel
         original = path.read_text()
         path.write_text(original + "\n# change\n")

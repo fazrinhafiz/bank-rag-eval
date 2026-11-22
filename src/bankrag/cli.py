@@ -1,4 +1,4 @@
-"""python -m bankrag {ask,eval,benchmark,calibrate,monitor}"""
+"""python -m bankrag {ask,eval,benchmark,calibrate,eval-external,monitor,doc-verify,doc-calibrate,doc-eval,doc-synth}"""
 from __future__ import annotations
 
 import argparse
@@ -153,6 +153,79 @@ def cmd_eval_external(args) -> int:
     return 0
 
 
+def cmd_doc_verify(args) -> int:
+    from .docverify.verify import DocumentVerifier
+
+    cfg = load_config(args.config)
+    app = {"application_id": args.application_id, "applicant_name": args.name, "nric": args.nric,
+           "application_date": args.application_date}
+    verdict = DocumentVerifier(cfg).verify(Path(args.pdf).read_bytes(), app)
+    print(json.dumps(verdict.to_json(), indent=2, default=str))
+    return 0
+
+
+def cmd_doc_calibrate(args) -> int:
+    from .docverify.evaluate import calibrate
+
+    cfg = load_config(args.config)
+    spec = calibrate(cfg)
+    for t, m in spec["models"].items():
+        rows = "  ".join(f"{c['method']}: recall {c['dev_tamper_recall']:.0%} auroc {c['dev_auroc']:.3f}" for c in m["comparison"])
+        print(f"{t:<15} selected {m['method']:<9} threshold {m['threshold']:.4f}   ({rows})")
+    print(f"written: {resolve(cfg, cfg['docverify']['anomaly_model'])}  (dev split only)")
+    return 0
+
+
+def cmd_doc_eval(args) -> int:
+    import yaml
+
+    from .docverify.evaluate import report_markdown, run
+    from .eval.metrics import check_gates
+
+    cfg = load_config(args.config)
+    dev, test = run(cfg, "dev"), run(cfg, "test")
+    gates = check_gates(test["metrics"], yaml.safe_load(resolve(cfg, cfg["docverify"]["thresholds"]).read_text())["gates"])
+    model_path = resolve(cfg, cfg["docverify"]["anomaly_model"])
+    model = json.loads(model_path.read_text()) if model_path.exists() else None
+    if model:
+        model = {**model, "models": {t: {k: v for k, v in m.items() if k != "X"} for t, m in model["models"].items()}}
+    out = resolve(cfg, "reports_dir")
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "docverify_report.md").write_text(report_markdown(test, dev, gates, model))
+    (out / "docverify_report.json").write_text(json.dumps(
+        {"test": test, "dev": {"metadata": dev["metadata"], "metrics": dev["metrics"]}, "anomaly_model": model,
+         "gates": [g.__dict__ for g in gates]}, indent=1, default=float))
+    m = test["metrics"]
+    print(f"test: {m['n_genuine']} genuine, {m['n_tampered']} tampered  corpus={test['metadata']['corpus_hash']}")
+    for g in gates:
+        print(f"  [{'PASS' if g.passed else 'FAIL'}] {g.metric:<30} {g.value:>7.1%}  (gate {g.op} {g.threshold:.1%})")
+    print(f"  tamper detection {m['tamper_detection_rate']:.1%}  genuine auto-accepted {m['genuine_auto_accept_rate']:.1%}  "
+          f"automation {m['automation_rate']:.1%}  extraction F1 {m['extraction_f1']:.3f}")
+    print(f"  report: {out / 'docverify_report.md'}")
+    if not all(g.passed for g in gates):
+        print("DOCUMENT GATE FAILED")
+        return 1
+    print("DOCUMENT GATE PASSED")
+    return 0
+
+
+def cmd_doc_synth(args) -> int:
+    from .docverify.evaluate import corpus
+
+    cfg = load_config(args.config)
+    out = Path(args.out)
+    out.mkdir(parents=True, exist_ok=True)
+    subs = corpus(cfg, args.split)
+    if args.limit:
+        subs = subs[:args.limit]
+    with (out / "manifest.jsonl").open("w") as fh:
+        for s in subs:
+            (out / f"{s.id}.pdf").write_bytes(s.pdf)
+            fh.write(json.dumps({**s.manifest(), "application": s.application, "truth": s.truth}) + "\n")
+    print(f"wrote {len(subs)} PDFs and manifest.jsonl to {out}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="bankrag", description=__doc__)
     parser.add_argument("--config", help="path to config.yaml (default: repo config or $BANKRAG_CONFIG)")
@@ -186,6 +259,26 @@ def build_parser() -> argparse.ArgumentParser:
     mon.add_argument("--out", help="write the markdown report here")
     mon.add_argument("--fail-on-alert", action="store_true", help="exit 2 if status is ALERT (for scheduled jobs)")
     mon.set_defaults(func=cmd_monitor)
+
+    dv = sub.add_parser("doc-verify", help="verify one payslip / bank statement PDF against an application")
+    dv.add_argument("pdf")
+    dv.add_argument("--name", required=True, help="applicant name as declared")
+    dv.add_argument("--nric", help="applicant NRIC as declared")
+    dv.add_argument("--application-date", required=True, help="YYYY-MM-DD")
+    dv.add_argument("--application-id", default="CLI-0001")
+    dv.set_defaults(func=cmd_doc_verify)
+
+    dc = sub.add_parser("doc-calibrate", help="fit and select the document anomaly model on the dev split")
+    dc.set_defaults(func=cmd_doc_calibrate)
+
+    de = sub.add_parser("doc-eval", help="evaluate document verification, write reports, enforce gates (exit 1 on failure)")
+    de.set_defaults(func=cmd_doc_eval)
+
+    ds = sub.add_parser("doc-synth", help="write the synthetic document corpus to a folder for inspection")
+    ds.add_argument("--split", choices=["dev", "test"], default="dev")
+    ds.add_argument("--out", default="synthetic_docs")
+    ds.add_argument("--limit", type=int)
+    ds.set_defaults(func=cmd_doc_synth)
     return parser
 
 

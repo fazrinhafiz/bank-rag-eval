@@ -22,7 +22,8 @@ def file_sha(path: str | Path) -> str:
 
 
 SOURCE_GLOBS = ("src/bankrag/**/*.py", "config.yaml", "prompts/*.yaml", "eval/golden_set.jsonl",
-                "eval/thresholds.yaml", "data/docs/*.md")
+                "eval/thresholds.yaml", "data/docs/*.md", "rules/*.yaml", "eval/docverify_thresholds.yaml",
+                "data/docverify/*.json")
 
 
 def source_fingerprint(root: str | Path) -> str:

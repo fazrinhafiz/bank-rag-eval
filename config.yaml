@@ -31,3 +31,15 @@ cost_per_1k_tokens:      # USD, used for trace cost estimates; set to your provi
   offline: {input: 0.0, output: 0.0}
   openai: {input: 0.00015, output: 0.0006}
   azure: {input: 0.00015, output: 0.0006}
+
+docverify:               # document intake: payslips and bank statements (bankrag.docverify)
+  rules: rules/document_rules.yaml
+  thresholds: eval/docverify_thresholds.yaml
+  anomaly_model: data/docverify/anomaly_model.json   # written by `bankrag doc-calibrate` (dev split)
+  max_upload_mb: 5        # request size limit for POST /documents/verify
+  anomaly_quantile: 0.97  # anomaly threshold = this quantile of out-of-fold scores on genuine DEV documents
+  corpus:                # synthetic corpus, regenerated deterministically from these seeds
+    dev_seed: 11
+    test_seed: 23
+    genuine_per_type: 100
+    tampered_per_kind: 10

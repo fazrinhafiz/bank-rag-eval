@@ -98,7 +98,29 @@ def external_block(root: Path) -> str:
     return "\n".join(lines)
 
 
-BLOCKS = {"results": results_block, "benchmark": benchmark_block, "drift": drift_block, "external": external_block}
+def docverify_block(root: Path) -> str:
+    x = json.loads((root / "reports/docverify_report.json").read_text())
+    t, d = x["test"]["metrics"], x["dev"]["metrics"]
+    pct = lambda v: f"{v:.1%}"
+    rows = [("Tampered documents not auto-accepted", "tamper_detection_rate"), ("Tampered documents auto-rejected", "tamper_reject_rate"),
+            ("Genuine documents auto-accepted", "genuine_auto_accept_rate"), ("Genuine documents wrongly rejected", "genuine_reject_rate"),
+            ("Automation rate at 2% fraud prevalence", "expected_automation_rate"),
+            ("Error rate of automatic decisions at 2% prevalence", "expected_auto_error_rate"), ("Field extraction F1", "extraction_f1")]
+    lines = [f"| measure | **test** ({t['n_genuine']} genuine, {t['n_tampered']} tampered; gated) | dev (used to fit the anomaly model) |",
+             "|---|---|---|"]
+    lines += [f"| {label} | **{pct(t[k])}** | {pct(d[k])} |" for label, k in rows]
+    kinds = [k[len("recall_"):] for k in t if k.startswith("recall_")]
+    lines += ["", "| tamper kind | " + " | ".join(k.replace("_", " ") for k in kinds) + " |", "|---" * (len(kinds) + 1) + "|",
+              "| recall (test) | " + " | ".join(pct(t[f"recall_{k}"]) for k in kinds) + " |"]
+    lines += ["", "Recall = share not auto-accepted. All documents are synthetic and the tampering was written by the same "
+              "author as the checks, so recall on rule-detectable kinds is close to true by construction; the informative "
+              "numbers are consistent forgery, the held-out layouts and the genuine review rate. Details and every miss: "
+              "[reports/docverify_report.md](reports/docverify_report.md)."]
+    return "\n".join(lines)
+
+
+BLOCKS = {"results": results_block, "benchmark": benchmark_block, "drift": drift_block, "external": external_block,
+          "docverify": docverify_block}
 DOCS = ("README.md", "docs/MODEL_CARD.md")
 _MARKER = re.compile(r"<!-- generated:(\w+):start -->\n(?:.*?\n)?<!-- generated:\1:end -->", re.S)
 

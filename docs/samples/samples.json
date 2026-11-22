@@ -1,0 +1,96 @@
+[
+  {
+    "file": "genuine_payslip.pdf",
+    "corpus_id": "test-0003",
+    "label": "genuine",
+    "variant": "plain",
+    "application": {
+      "application_id": "APP-test-0004",
+      "applicant_name": "Lakshmi a/p Muthu",
+      "nric": "880226-01-6450",
+      "application_date": "2026-10-31"
+    },
+    "expected_decision": "auto_accept",
+    "reasons": []
+  },
+  {
+    "file": "genuine_statement_malay.pdf",
+    "corpus_id": "test-0102",
+    "label": "genuine",
+    "variant": "plain",
+    "application": {
+      "application_id": "APP-test-0103",
+      "applicant_name": "Ong Zhi Hao",
+      "nric": "980608-13-6110",
+      "application_date": "2026-11-15"
+    },
+    "expected_decision": "auto_accept",
+    "reasons": []
+  },
+  {
+    "file": "tampered_payslip_arithmetic.pdf",
+    "corpus_id": "test-0200",
+    "label": "arithmetic",
+    "variant": "basic_only",
+    "application": {
+      "application_id": "APP-test-0201",
+      "applicant_name": "Farah Hanim binti Zainal",
+      "nric": "720415-08-3504",
+      "application_date": "2026-10-17"
+    },
+    "expected_decision": "reject",
+    "reasons": [
+      "Figures on the document do not add up.",
+      "The name only partly matches the application."
+    ]
+  },
+  {
+    "file": "tampered_payslip_consistent_forgery.pdf",
+    "corpus_id": "test-0211",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "application": {
+      "application_id": "APP-test-0212",
+      "applicant_name": "Amir Hamzah bin Kamarudin",
+      "nric": "930223-05-2615",
+      "application_date": "2026-10-29"
+    },
+    "expected_decision": "manual_review",
+    "reasons": [
+      "The figures are unusual compared with genuine documents."
+    ]
+  },
+  {
+    "file": "tampered_statement_font.pdf",
+    "corpus_id": "test-0301",
+    "label": "font_inconsistency",
+    "variant": "size",
+    "application": {
+      "application_id": "APP-test-0302",
+      "applicant_name": "Prakash a/l Muthu",
+      "nric": "941115-09-0985",
+      "application_date": "2026-10-29"
+    },
+    "expected_decision": "manual_review",
+    "reasons": [
+      "Amounts are printed in inconsistent fonts or sizes."
+    ]
+  },
+  {
+    "file": "tampered_payslip_edited_metadata.pdf",
+    "corpus_id": "test-0230",
+    "label": "metadata_modified",
+    "variant": "editor_incremental",
+    "application": {
+      "application_id": "APP-test-0231",
+      "applicant_name": "Nur Izzati binti Razak",
+      "nric": "900223-14-7290",
+      "application_date": "2026-11-03"
+    },
+    "expected_decision": "manual_review",
+    "reasons": [
+      "The file shows signs of editing after it was issued.",
+      "The figures are unusual compared with genuine documents."
+    ]
+  }
+]

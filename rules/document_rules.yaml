@@ -1,0 +1,53 @@
+# Decision rules for submitted payslips and bank statements (bankrag.docverify).
+#
+# Policy:
+#   * The machine REJECTS only on hard evidence: the document contradicts itself, the applicant, or an
+#     earlier submission by someone else.
+#   * Forensic signals and the anomaly score are suspicion, not proof: they go to MANUAL REVIEW.
+#   * Anything the system could not check goes to manual review too (fail closed).
+#   * The most severe matching decision wins; every matching rule is returned as a reason.
+#
+# Loading fails if a rule names a finding code that does not exist (bankrag/docverify/checks.py CODES), and
+# tests fail if a non-informational code has no rule. Changing this file changes source_fingerprint, so
+# eval reports show which rules produced them.
+version: doc-rules-v1
+default: auto_accept
+
+settings:
+  pay_date_grace_days: 10        # a salary may be paid up to 10 days after the period ends
+  max_document_age_days: 90      # older documents: ask for a recent one
+  modified_after_days: 2         # metadata: modification this long after creation is noted
+  anomaly: true                  # score documents with data/docverify/anomaly_model.json
+  editor_patterns: [pdfescape, sejda, ilovepdf, smallpdf, "foxit pdf editor", "pdf-xchange editor",
+                    pdfelement, "nitro pro", "acrobat pro", canva, photoshop]
+
+rules:
+  # --- reject: hard evidence -----------------------------------------------------------------------
+  - {id: R01, when: {any: [arithmetic_mismatch]}, decision: reject,
+     reason: "Figures on the document do not add up."}
+  - {id: R02, when: {any: [nric_invalid]}, decision: reject,
+     reason: "The NRIC is not a possible MyKad number."}
+  - {id: R03, when: {any: [nric_mismatch]}, decision: reject,
+     reason: "The NRIC on the document is not the applicant's."}
+  - {id: R04, when: {any: [name_mismatch]}, decision: reject,
+     reason: "The document belongs to a different person."}
+  - {id: R05, when: {any: [date_outside_period, document_future_dated]}, decision: reject,
+     reason: "Dates in the document contradict its stated period or the application date."}
+  - {id: R06, when: {any: [duplicate_other_applicant]}, decision: reject,
+     reason: "The same document was already submitted by another applicant."}
+  # --- manual review: suspicion, or something to confirm with the applicant --------------------------
+  - {id: R10, when: {any: [pdf_editor_producer, pdf_incremental_update, pdf_rewritten_after_creation]},
+     decision: manual_review, reason: "The file shows signs of editing after it was issued."}
+  - {id: R11, when: {any: [font_inconsistent]}, decision: manual_review,
+     reason: "Amounts are printed in inconsistent fonts or sizes."}
+  - {id: R12, when: {any: [anomaly_score_high]}, decision: manual_review,
+     reason: "The figures are unusual compared with genuine documents."}
+  - {id: R13, when: {any: [statutory_mismatch]}, decision: manual_review,
+     reason: "Statutory deductions do not match the expected rates."}
+  - {id: R14, when: {any: [name_partial_match]}, decision: manual_review,
+     reason: "The name only partly matches the application."}
+  - {id: R15, when: {any: [document_stale]}, decision: manual_review,
+     reason: "The document is older than policy allows; ask for a recent one."}
+  # --- manual review: fail closed --------------------------------------------------------------------
+  - {id: R20, when: {any: [unreadable_pdf, unsupported_document, extraction_incomplete, check_error]},
+     decision: manual_review, reason: "The document could not be fully checked automatically."}

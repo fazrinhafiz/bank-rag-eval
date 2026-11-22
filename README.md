@@ -12,6 +12,11 @@ assistant in front of customers:
 - drift monitoring
 - governance documents written the way a model risk team would review them
 
+The same discipline is applied to a second, non-chat use case: **document intake for loan applications.**
+Payslips and bank statements are checked for tampering, and a YAML rule engine decides *auto-accept*,
+*manual review* or *reject*, giving every reason. It's evaluated on a synthetic corpus with ground truth and
+gated in CI ([below](#document-intake-and-tamper-detection)).
+
 Everything runs **offline, deterministically, with no API key**, so every number below can be reproduced
 for free. A real LLM (OpenAI, Azure OpenAI, Ollama/vLLM) plugs in through environment variables.
 
@@ -106,7 +111,7 @@ uvicorn bankrag.api:create_app --factory --port 8000     # OpenAPI docs at http:
 
 docker build -t bankrag .
 docker run -p 8000:8000 -e BANKRAG_TRACE_SALT=<from your secret store> bankrag
-bash scripts/container_smoke_test.sh                     # build + run + 7 behaviour checks (also runs in CI)
+bash scripts/container_smoke_test.sh                     # build + run + 9 behaviour checks (also runs in CI)
 ```
 
 ```text
@@ -121,13 +126,93 @@ $ curl -s -H 'X-Request-ID: case-42' -H 'content-type: application/json' \
 |---|---|
 | `GET /health` | liveness, plus the versions behind every answer: `source_fingerprint`, retrieval mode, provider, prompt version, threshold |
 | `POST /ask` | one question through the guarded pipeline; returns the outcome (`answered` / `abstained` / `blocked`), the reason code and citations |
+| `POST /documents/verify` | a base64 PDF plus its application; returns `auto_accept` / `manual_review` / `reject`, the reasons, findings and extracted fields (NRIC masked) |
 
 **Operational design:**
 - **One ID end to end.** Every response carries `X-Request-ID`, taken from the caller if it's a safe token, otherwise generated. The same ID is in the access log line, the decision log line and the trace record.
 - **Logs are JSON, one object per line on stdout,** so any collector can ingest them. They contain IDs, outcomes, reason codes and timings, never the question text: the trace keeps only the PII-masked query. On an unhandled error the caller gets `{"error": "internal_error", "request_id": ...}` and the log records only the exception *type*, because messages and tracebacks can echo input.
 - **The container is small and safe by default:** `python:3.12-slim`, runs as uid 10001, has a Docker `HEALTHCHECK`, and no secrets are baked in (`BANKRAG_TRACE_SALT` comes from the environment).
 - **A running container can be tied to its evidence.** `/health` reports the same `source_fingerprint` as the eval reports it was gated on.
-- **CI checks the real artifact.** A `container` job builds the image and runs `scripts/container_smoke_test.sh`: health, a cited answer, an injection blocked, non-root user, request ID in the JSON logs, and no raw NRIC in the logs or trace file. This smoke test caught a config-path bug that only appears in a non-editable install, which unit tests can't see.
+- **CI checks the real artifact.** A `container` job builds the image and runs `scripts/container_smoke_test.sh`: health, a cited answer, an injection blocked, the six sample documents in `docs/samples/` getting their expected decisions, non-root user, request ID in the JSON logs, and no raw NRIC in the logs or trace file. This smoke test caught a config-path bug that only appears in a non-editable install, which unit tests can't see.
+
+## Document intake and tamper detection
+
+A loan applicant uploads a payslip or a bank statement. Before anyone relies on the income in it, the bank
+needs to know: is it readable, is it this applicant's, is it recent, and has it been altered?
+
+```mermaid
+flowchart LR
+    PDF([PDF + application]) --> RD["Read text layer<br/>fonts · metadata · revisions"]
+    RD --> EX["Extract fields<br/>bilingual label patterns<br/>(optional LLM, schema-validated)"]
+    EX --> CK["Consistency<br/>arithmetic · statutory · NRIC<br/>name · dates"]
+    RD --> FO["Forensics<br/>editing tool · incremental update<br/>rewrite · font consistency"]
+    EX --> AN["Anomaly score<br/>fitted on genuine dev docs"]
+    EX --> RG["Duplicate registry<br/>file hash + content fingerprint"]
+    CK & FO & AN & RG --> RU{"rules/document_rules.yaml"}
+    RU --> A([auto_accept]) & M([manual_review]) & R([reject])
+```
+
+```bash
+pip install -e ".[docs,synth]"    # pypdf to read PDFs; fpdf2 only to generate the synthetic corpus
+python -m bankrag doc-verify docs/samples/tampered_payslip_arithmetic.pdf \
+    --name "Farah Hanim binti Zainal" --nric 720415-08-3504 --application-date 2026-10-17
+python -m bankrag doc-calibrate     # fit + select the anomaly model on the dev split
+python -m bankrag doc-eval          # test split, writes reports/docverify_report.md, exits 1 if a gate fails
+python -m bankrag doc-synth --out synthetic_docs --limit 20    # look at the PDFs yourself
+```
+
+Real output (abridged):
+
+```text
+"decision": "reject",
+"reasons":  R01 reject         "Figures on the document do not add up."         [arithmetic_mismatch]
+            R14 manual_review  "The name only partly matches the application."  [name_partial_match]
+"findings": arithmetic_mismatch  "basic 14000.00 + allowances 1200.00 != gross 7100.00"
+            name_partial_match   "name similarity 0.67"      (the payslip says FARAH HANIM)
+"fields":   {"nric": "XXXXXX-XX-3504", ...}                   (masked in every response)
+```
+
+**How it decides.** The policy is in [rules/document_rules.yaml](rules/document_rules.yaml), not in code:
+- **Reject only on hard evidence.** The document contradicts itself (totals or running balances don't add up), the applicant (name or NRIC), its own dates, or an earlier submission by someone else. An impossible NRIC is rejected too.
+- **Suspicion goes to a human.** Signs of an editing tool, an incremental save, a rewrite days after issue, amounts in a different font or size, or an unusual anomaly score all send the document to manual review.
+- **Fail closed.** If a file can't be read, a field is missing, or a check crashes, the document goes to manual review.
+- **Every matching rule is returned as a reason,** so a reviewer sees all the reasons, not just the first. Loading fails if a rule names an unknown finding code, and a test fails if a finding has no rule.
+
+**The data is synthetic, and the report says so first.** No public dataset has Malaysian payslips with
+labelled tampering, so [synth.py](src/bankrag/docverify/synth.py) generates them. The people, employers and
+banks are fictional, and payroll uses simplified EPF / SOCSO / EIS / PCB rules:
+- **Six layouts:** English, bilingual and Malay payslips; signed-amount and debit/credit-column statements.
+- **Realistic genuine variation:** MOHD and BT. abbreviations, dropped *bin*/*a/l*, reordered Chinese names, shortened names, payslips printed to PDF, statements re-downloaded weeks later.
+- **Eight tamper kinds.**
+- **Splits:** dev and test use different seeds. One payslip layout and one statement layout appear **only in test.**
+- **What the anomaly model sees:** it is fitted and its method chosen on dev only. It compares IsolationForest with a per-feature robust z-score, and the z-score won on dev.
+
+<!-- generated:docverify:start -->
+| measure | **test** (200 genuine, 150 tampered; gated) | dev (used to fit the anomaly model) |
+|---|---|---|
+| Tampered documents not auto-accepted | **94.0%** | 95.3% |
+| Tampered documents auto-rejected | **60.0%** | 60.0% |
+| Genuine documents auto-accepted | **96.5%** | 94.0% |
+| Genuine documents wrongly rejected | **0.0%** | 0.0% |
+| Automation rate at 2% fraud prevalence | **95.9%** | 93.5% |
+| Error rate of automatic decisions at 2% prevalence | **0.1%** | 0.1% |
+| Field extraction F1 | **100.0%** | 100.0% |
+
+| tamper kind | arithmetic | consistent forgery | font inconsistency | metadata modified | invalid nric | period mismatch | name mismatch | duplicate resubmission |
+|---|---|---|---|---|---|---|---|---|
+| recall (test) | 100.0% | 55.0% | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% | 100.0% |
+
+Recall = share not auto-accepted. All documents are synthetic and the tampering was written by the same author as the checks, so recall on rule-detectable kinds is close to true by construction; the informative numbers are consistent forgery, the held-out layouts and the genuine review rate. Details and every miss: [reports/docverify_report.md](reports/docverify_report.md).
+<!-- generated:docverify:end -->
+
+**What the numbers say.** Recall of 100% on the rule-detectable kinds mostly shows that each check does what
+it was written to do, because I wrote both the forgeries and the checks. The informative results are these:
+- **Consistent forgery.** Salary is inflated and every total recomputed, so nothing contradicts anything.
+  - Payslips are caught by one anomaly feature, tax relative to income. It was designed knowing the simulated forger leaves PCB alone, so it is an upper bound.
+  - Bank statements are mostly missed: a self-consistent statement has nothing inside it to contradict. The fix is a cross-document check (salary credit vs net pay) or data from the source, not a better model.
+- **Process disclosure.** My first anomaly model (IsolationForest on ratios) caught none of them on dev or test. The redesign used dev only, and the gates were written before the final test run.
+- **The genuine documents sent to review** are mostly legitimately shortened names, which is the right call.
+- **Extraction is exact even on the two held-out layouts.** That's expected for text-layer PDFs and says nothing about scans, which have no text layer and go to manual review.
 
 ## Results
 
@@ -230,6 +315,9 @@ data/docs/                  7 fictional policy documents (source of truth, unmod
 data/external/              Banking77 + deepset prompt injections (JSONL), intent map, sources and licences
 eval/golden_set.jsonl       57 labelled items: 35 answerable, 10 unanswerable, 6 injection, 6 PII
 eval/thresholds.yaml        quality gates (safety = absolute, quality = regression floors)
+eval/docverify_thresholds.yaml  document-verification gates
+rules/document_rules.yaml   document decision policy (reject / manual review / auto-accept)
+data/docverify/             anomaly model (training matrix + threshold, fitted on dev; JSON, not a pickle)
 prompts/answer_v1.yaml      versioned prompt: [doc_id#section] citations + explicit abstain text
 config.yaml                 chunking, retrieval mode, top_k, abstain threshold, provider, prices
 src/bankrag/
@@ -244,10 +332,13 @@ src/bankrag/
   eval/                     metrics, harness, dev-only calibration, benchmark, LLM judge, reports
   eval/external.py          independent evaluation on the public datasets
   monitoring/               PSI / KS drift monitor (incl. query-term drift), real-query traffic simulator
-tests/                      160+ tests incl. label checks, gate mutation tests, API tests, docs-in-sync check
+  docverify/                document intake: synthetic corpus, PDF extraction, checks, forensics, anomaly model,
+                            duplicate registry, rule engine, verifier, optional LLM extractor, evaluation
+tests/                      220+ tests incl. label checks, gate mutation tests, API tests, docs-in-sync check
 Dockerfile                  non-root API image; scripts/container_smoke_test.sh checks it end to end
 reports/                    committed outputs of the runs quoted in this README
 docs/                       use-case assessment, model card, design decisions (ADRs)
+docs/samples/               six synthetic documents (genuine and tampered) with their expected decisions
 ```
 
 ## Testing the tests
@@ -262,6 +353,7 @@ Two things are tested beyond the usual unit tests:
   - an over-eager injection filter
 
   The unmodified system must pass every gate.
+- **The document gate.** `tests/test_docverify_gates.py` turns off each check group in turn (arithmetic, identity, dates, registry, fonts, metadata, anomaly) and asserts the gate that guards it fails. The statutory check is the exception: on this corpus everything it catches is caught by arithmetic first, so it has a unit test but no gate.
 
 ## Plugging in a real LLM
 
@@ -309,6 +401,9 @@ report before release** (see [MODEL_CARD.md](docs/MODEL_CARD.md#change-managemen
 - **Quality gates were set after seeing the first baseline test run.** They're regression floors, not independent targets.
 - **The KB has an unflagged ambiguity.** `savings-account` says DuitNow transfers are "unlimited free", while `fees-and-charges` limits free transfers to RM5,000 per transaction. There's no document-conflict detection.
 - **Single-turn only.** No authentication, personalisation or conversation memory.
+- **Document verification is evaluated on synthetic documents only,** with tampering written by the checks' author. See *What the numbers say* above and the limitations in [reports/docverify_report.md](reports/docverify_report.md).
+- **The document checks need a text layer.** Scans and phone photos go to manual review because OCR isn't implemented. The forensic checks are easy to evade once known.
+- **The duplicate registry is in memory.** It resets when the service restarts, and it isn't shared between replicas.
 
 ## Next steps (good first issues)
 
@@ -317,7 +412,9 @@ report before release** (see [MODEL_CARD.md](docs/MODEL_CARD.md#change-managemen
 3. **Add a reranker or answerability check.** Try a cross-encoder reranker, or a "does this passage answer *this* product question?" verifier, and measure it against the una-03 / una-08 / una-10 failures.
 4. **Make injection detection generalise.** Use deepset's *train* split to improve the detector (rules, or a small classifier on TF-IDF features) and report on its *test* split only. Track detection rate and false-positive rate on Banking77 together.
 5. **Build a dashboard over the traces.** Show PSI over rolling windows, abstention and block rates, latency and cost per day, plus an alert log, for example with Streamlit over `traces/*.jsonl`.
-6. **Recalibrate on real phrasing.** Label a dev sample of Banking77 queries (answerable from the docs or not), recalibrate the threshold on it, and report on held-out Banking77 queries. Currently only 45.3% of real in-scope queries are answered.
+6. **Reconcile documents against each other.** Match the salary credit on the bank statement against the payslip's net pay and employer. This is the check that catches the consistent statement forgeries the anomaly score misses.
+7. **Add OCR for scanned documents** (Tesseract or a document-AI service), and evaluate it on a labelled public receipt or form dataset after checking its licence.
+8. **Recalibrate on real phrasing.** Label a dev sample of Banking77 queries (answerable from the docs or not), recalibrate the threshold on it, and report on held-out Banking77 queries. Currently only 45.3% of real in-scope queries are answered.
 
 ## Documentation
 

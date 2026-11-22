@@ -94,3 +94,49 @@ def test_json_formatter_emits_one_json_object_with_context():
     rec.event = "x"
     out = json.loads(JsonFormatter().format(rec))
     assert out["msg"] == "hello" and out["event"] == "x" and out["level"] == "INFO" and "ts" in out
+
+
+# ------------------------------------------------------------------------------------------- /documents/verify
+@pytest.fixture(scope="module")
+def doc_corpus():
+    pytest.importorskip("pypdf")
+    pytest.importorskip("fpdf")
+    from bankrag.docverify.synth import build_corpus
+    return build_corpus("test", 23, n_genuine=3, n_per_kind=1)
+
+
+def _verify_body(sub):
+    import base64
+    return {"application": sub.application, "document_base64": base64.b64encode(sub.pdf).decode()}
+
+
+def test_document_verify_accepts_genuine_and_masks_nric(traced, doc_corpus, caplog):
+    client, _ = traced
+    genuine = next(s for s in doc_corpus if s.label == "genuine" and s.doc_type == "payslip" and s.template == "P2")
+    with caplog.at_level(logging.INFO):
+        r = client.post("/documents/verify", json=_verify_body(genuine), headers={"X-Request-ID": "doc-1"})
+    body = r.json()
+    assert r.status_code == 200 and body["request_id"] == "doc-1" and body["doc_type"] == "payslip"
+    assert body["decision"] == "auto_accept" and body["fields"]["nric"].startswith("XXXXXX-XX-")
+    assert genuine.truth["nric"] not in r.text
+    logged = " ".join(str(rec.__dict__) for rec in caplog.records)
+    assert genuine.truth["nric"] not in logged and any(getattr(rec, "event", "") == "doc_decision" for rec in caplog.records)
+
+
+def test_document_verify_rejects_with_reasons(traced, doc_corpus):
+    client, _ = traced
+    tampered = next(s for s in doc_corpus if s.label == "arithmetic")
+    body = client.post("/documents/verify", json=_verify_body(tampered)).json()
+    assert body["decision"] == "reject" and body["reasons"][0]["rule"] == "R01"
+    assert any(f["code"] == "arithmetic_mismatch" for f in body["findings"])
+
+
+def test_document_verify_input_errors(traced, doc_corpus):
+    client, _ = traced
+    sub = doc_corpus[0]
+    bad64 = {"application": sub.application, "document_base64": "%%% not base64 %%%"}
+    assert client.post("/documents/verify", json=bad64).status_code == 422
+    bad_app = {"application": {**sub.application, "application_date": "yesterday"}, "document_base64": "AAAA"}
+    assert client.post("/documents/verify", json=bad_app).status_code == 422
+    huge = {"application": sub.application, "document_base64": "A" * (8 * 1024 * 1024)}
+    assert client.post("/documents/verify", json=huge).status_code == 413

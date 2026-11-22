@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "bankrag"
 version = "0.1.0"
-description = "Evaluation-first RAG assistant for a fictional bank: golden set, guardrails, quality gates and drift monitoring."
+description = "Evaluation-first RAG assistant and document tamper detection for a fictional bank: golden sets, guardrails, rule engine, quality gates and drift monitoring."
 readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "Muhammad Fazrin Hafiz" }]
@@ -17,6 +17,8 @@ openai = ["openai>=1.40"]
 dev = ["pytest>=8.0", "httpx>=0.27"]
 api = ["fastapi>=0.110", "uvicorn>=0.29"]
 fetch = ["pyarrow>=14", "certifi"]
+docs = ["pypdf>=5.1"]
+synth = ["fpdf2>=2.7"]
 
 [project.scripts]
 bankrag = "bankrag.cli:main"

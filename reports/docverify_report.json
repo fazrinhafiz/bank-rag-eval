@@ -1,0 +1,6592 @@
+{
+ "test": {
+  "metadata": {
+   "split": "test",
+   "n_documents": 350,
+   "corpus_hash": "1b73e393e244",
+   "rules_version": "doc-rules-v1",
+   "anomaly_model": "genuine documents of the dev split (seed 11, corpus ec3957609095)",
+   "disabled_checks": [],
+   "source_fingerprint": "d353b2c11a99",
+   "prevalence_assumed": 0.02
+  },
+  "metrics": {
+   "n_genuine": 200,
+   "n_tampered": 150,
+   "genuine_auto_accept_rate": 0.965,
+   "genuine_review_rate": 0.035,
+   "genuine_reject_rate": 0.0,
+   "tamper_detection_rate": 0.94,
+   "tamper_reject_rate": 0.6,
+   "recall_arithmetic": 1.0,
+   "recall_consistent_forgery": 0.55,
+   "recall_font_inconsistency": 1.0,
+   "recall_metadata_modified": 1.0,
+   "recall_invalid_nric": 1.0,
+   "recall_period_mismatch": 1.0,
+   "recall_name_mismatch": 1.0,
+   "recall_duplicate_resubmission": 1.0,
+   "automation_rate": 0.8342857142857143,
+   "auto_decision_error_rate": 0.030821917808219176,
+   "expected_automation_rate": 0.959325,
+   "expected_auto_error_rate": 0.00117269955437417,
+   "extraction_precision": 1.0,
+   "extraction_recall": 1.0,
+   "extraction_f1": 1.0,
+   "extraction_doc_exact_rate": 1.0,
+   "anomaly_auroc": 0.7844166666666667
+  },
+  "results": [
+   {
+    "id": "test-0000",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "printed_to_pdf",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.082348,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0001",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "printed_to_pdf",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.668359,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0002",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.932937,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0003",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.402271,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0004",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.028005,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0005",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.051947,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0006",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "manual_review",
+    "codes": [
+     "name_partial_match"
+    ],
+    "anomaly_score": 1.768301,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R14"
+    ]
+   },
+   {
+    "id": "test-0007",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.206459,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0008",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.903771,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0009",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.215119,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0010",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.601958,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0011",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.693404,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0012",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "manual_review",
+    "codes": [
+     "name_partial_match"
+    ],
+    "anomaly_score": 0.991291,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R14"
+    ]
+   },
+   {
+    "id": "test-0013",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.768491,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0014",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "manual_review",
+    "codes": [
+     "name_partial_match"
+    ],
+    "anomaly_score": 0.674484,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R14"
+    ]
+   },
+   {
+    "id": "test-0015",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.535242,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0016",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.30043,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0017",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.674484,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0018",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.674484,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0019",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.932133,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0020",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.26774,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0021",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.617465,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0022",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.377972,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0023",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.238798,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0024",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.712947,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0025",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.683094,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0026",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.838213,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0027",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.0033,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0028",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "printed_to_pdf",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.845878,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0029",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.709108,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0030",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.029292,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0031",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "printed_to_pdf",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.311203,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0032",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.93523,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0033",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.822044,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0034",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.226919,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0035",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.008885,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0036",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "printed_to_pdf",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.249834,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0037",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.345454,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0038",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.092094,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0039",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.730499,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0040",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.069876,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0041",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.627465,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0042",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.15956,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0043",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.39134,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0044",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "manual_review",
+    "codes": [
+     "name_partial_match"
+    ],
+    "anomaly_score": 1.759853,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R14"
+    ]
+   },
+   {
+    "id": "test-0045",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.989576,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0046",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.786238,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0047",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.16572,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0048",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.617815,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0049",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.883519,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0050",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.832312,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0051",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.018277,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0052",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.215119,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0053",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.232756,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0054",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "printed_to_pdf",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.836965,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0055",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.365362,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0056",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.410027,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0057",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.126198,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0058",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.689968,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0059",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.674484,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0060",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.34556,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0061",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.58475,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0062",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.668213,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0063",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "printed_to_pdf",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.503823,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0064",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.571242,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0065",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.199489,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0066",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.674484,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0067",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.117319,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0068",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "printed_to_pdf",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.960031,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0069",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.47663,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0070",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.228667,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0071",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.960058,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0072",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "printed_to_pdf",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.180713,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0073",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.462213,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0074",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.652846,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0075",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.101602,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0076",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.34965,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0077",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.702588,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0078",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.473566,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0079",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.744797,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0080",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.951973,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0081",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.423394,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0082",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.279966,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0083",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.260522,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0084",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.674484,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0085",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "printed_to_pdf",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.082861,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0086",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.972435,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0087",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.668735,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0088",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.674484,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0089",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.145605,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0090",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "printed_to_pdf",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.149997,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0091",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.644517,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0092",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.412829,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0093",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.200861,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0094",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.8744,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0095",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.949582,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0096",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.023354,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0097",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.61542,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0098",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.533393,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0099",
+    "doc_type": "payslip",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "P1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.674484,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0100",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.023472,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0101",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.927035,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0102",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.989186,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0103",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.023472,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0104",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.847794,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0105",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.563264,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0106",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [
+     "pdf_modified_after_creation"
+    ],
+    "anomaly_score": 1.686226,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0107",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.570492,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0108",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [
+     "pdf_modified_after_creation"
+    ],
+    "anomaly_score": 1.218077,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0109",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.196457,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0110",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.360717,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0111",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.560761,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0112",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.384907,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0113",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [
+     "pdf_modified_after_creation"
+    ],
+    "anomaly_score": 1.83034,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0114",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.929859,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0115",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.689514,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0116",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.947519,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0117",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.114551,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0118",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.155568,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0119",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.433276,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0120",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.703367,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0121",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.467705,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0122",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.348981,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0123",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "manual_review",
+    "codes": [
+     "name_partial_match"
+    ],
+    "anomaly_score": 0.509541,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R14"
+    ]
+   },
+   {
+    "id": "test-0124",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.935876,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0125",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.697962,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0126",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.697962,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0127",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.549204,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0128",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.131762,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0129",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [
+     "pdf_modified_after_creation"
+    ],
+    "anomaly_score": 1.011736,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0130",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.688258,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0131",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.803679,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0132",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.697962,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0133",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.686226,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0134",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "manual_review",
+    "codes": [
+     "name_partial_match"
+    ],
+    "anomaly_score": 1.348981,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R14"
+    ]
+   },
+   {
+    "id": "test-0135",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.141766,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0136",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.602705,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0137",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [
+     "pdf_modified_after_creation"
+    ],
+    "anomaly_score": 1.299542,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0138",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.363648,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0139",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.686226,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0140",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.011736,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0141",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.028198,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0142",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.348981,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0143",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.15268,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0144",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.011736,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0145",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [
+     "pdf_modified_after_creation"
+    ],
+    "anomaly_score": 1.686226,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0146",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.354709,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0147",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.315537,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0148",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.993097,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0149",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.011736,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0150",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.348981,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0151",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [
+     "pdf_modified_after_creation"
+    ],
+    "anomaly_score": 1.404596,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0152",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.472921,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0153",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.201342,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0154",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.686226,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0155",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.558003,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0156",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [
+     "pdf_modified_after_creation"
+    ],
+    "anomaly_score": 3.204109,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0157",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.662199,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0158",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high"
+    ],
+    "anomaly_score": 5.596647,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0159",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.962435,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0160",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.674491,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0161",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.057906,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0162",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.686226,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0163",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [
+     "pdf_modified_after_creation"
+    ],
+    "anomaly_score": 3.204562,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0164",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.753813,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0165",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.041176,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0166",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.765396,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0167",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.884219,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0168",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.728153,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0169",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.469377,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0170",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.092336,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0171",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.588175,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0172",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.348981,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0173",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.373689,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0174",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 4.510667,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0175",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.612265,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0176",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.781325,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0177",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.159407,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0178",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.686226,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0179",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.640646,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0180",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.811782,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0181",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.337515,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0182",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.023472,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0183",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.348981,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0184",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.439469,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0185",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.559928,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0186",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.065667,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0187",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.88998,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0188",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.023472,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0189",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 3.926894,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0190",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.844003,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0191",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [
+     "pdf_modified_after_creation"
+    ],
+    "anomaly_score": 1.940884,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0192",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.828101,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0193",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [
+     "pdf_modified_after_creation"
+    ],
+    "anomaly_score": 1.686226,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0194",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "redownloaded",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [
+     "pdf_modified_after_creation"
+    ],
+    "anomaly_score": 1.055469,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0195",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.348981,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0196",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.360717,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0197",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.269783,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0198",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.360836,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0199",
+    "doc_type": "bank_statement",
+    "label": "genuine",
+    "variant": "plain",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 0.887244,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0200",
+    "doc_type": "payslip",
+    "label": "arithmetic",
+    "variant": "basic_only",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "arithmetic_mismatch",
+     "name_partial_match"
+    ],
+    "anomaly_score": 1.085398,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01",
+     "R14"
+    ]
+   },
+   {
+    "id": "test-0201",
+    "doc_type": "payslip",
+    "label": "arithmetic",
+    "variant": "net_pay_only",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "anomaly_score_high",
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 12.946018,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0202",
+    "doc_type": "payslip",
+    "label": "arithmetic",
+    "variant": "basic_only",
+    "template": "P3",
+    "decision": "reject",
+    "codes": [
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 1.021427,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01"
+    ]
+   },
+   {
+    "id": "test-0203",
+    "doc_type": "payslip",
+    "label": "arithmetic",
+    "variant": "net_pay_only",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "anomaly_score_high",
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 25.446428,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0204",
+    "doc_type": "payslip",
+    "label": "arithmetic",
+    "variant": "basic_only",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 3.682852,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01"
+    ]
+   },
+   {
+    "id": "test-0205",
+    "doc_type": "payslip",
+    "label": "arithmetic",
+    "variant": "net_pay_only",
+    "template": "P3",
+    "decision": "reject",
+    "codes": [
+     "anomaly_score_high",
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 21.642954,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0206",
+    "doc_type": "payslip",
+    "label": "arithmetic",
+    "variant": "basic_only",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 1.021427,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01"
+    ]
+   },
+   {
+    "id": "test-0207",
+    "doc_type": "payslip",
+    "label": "arithmetic",
+    "variant": "net_pay_only",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "anomaly_score_high",
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 16.442963,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0208",
+    "doc_type": "payslip",
+    "label": "arithmetic",
+    "variant": "basic_only",
+    "template": "P3",
+    "decision": "reject",
+    "codes": [
+     "arithmetic_mismatch",
+     "name_partial_match"
+    ],
+    "anomaly_score": 0.674484,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01",
+     "R14"
+    ]
+   },
+   {
+    "id": "test-0209",
+    "doc_type": "payslip",
+    "label": "arithmetic",
+    "variant": "net_pay_only",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "anomaly_score_high",
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 12.457928,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0210",
+    "doc_type": "payslip",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "P1",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high"
+    ],
+    "anomaly_score": 31.137422,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0211",
+    "doc_type": "payslip",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "P2",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high"
+    ],
+    "anomaly_score": 13.213151,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0212",
+    "doc_type": "payslip",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "P3",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high"
+    ],
+    "anomaly_score": 17.499583,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0213",
+    "doc_type": "payslip",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "P1",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high"
+    ],
+    "anomaly_score": 18.932695,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0214",
+    "doc_type": "payslip",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "P2",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high"
+    ],
+    "anomaly_score": 16.164415,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0215",
+    "doc_type": "payslip",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "P3",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high"
+    ],
+    "anomaly_score": 15.216154,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0216",
+    "doc_type": "payslip",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "P1",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high"
+    ],
+    "anomaly_score": 14.38331,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0217",
+    "doc_type": "payslip",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "P2",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high"
+    ],
+    "anomaly_score": 19.910133,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0218",
+    "doc_type": "payslip",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "P3",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high"
+    ],
+    "anomaly_score": 14.634749,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0219",
+    "doc_type": "payslip",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "P1",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high"
+    ],
+    "anomaly_score": 9.06631,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0220",
+    "doc_type": "payslip",
+    "label": "font_inconsistency",
+    "variant": "family",
+    "template": "P1",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "font_inconsistent"
+    ],
+    "anomaly_score": 17.853552,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0221",
+    "doc_type": "payslip",
+    "label": "font_inconsistency",
+    "variant": "size",
+    "template": "P2",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "font_inconsistent"
+    ],
+    "anomaly_score": 12.135101,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0222",
+    "doc_type": "payslip",
+    "label": "font_inconsistency",
+    "variant": "family",
+    "template": "P3",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "font_inconsistent"
+    ],
+    "anomaly_score": 16.038839,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0223",
+    "doc_type": "payslip",
+    "label": "font_inconsistency",
+    "variant": "size",
+    "template": "P1",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "font_inconsistent"
+    ],
+    "anomaly_score": 7.360805,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0224",
+    "doc_type": "payslip",
+    "label": "font_inconsistency",
+    "variant": "family",
+    "template": "P2",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "font_inconsistent"
+    ],
+    "anomaly_score": 17.363589,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0225",
+    "doc_type": "payslip",
+    "label": "font_inconsistency",
+    "variant": "size",
+    "template": "P3",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "font_inconsistent"
+    ],
+    "anomaly_score": 9.327897,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0226",
+    "doc_type": "payslip",
+    "label": "font_inconsistency",
+    "variant": "family",
+    "template": "P1",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "font_inconsistent"
+    ],
+    "anomaly_score": 24.912327,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0227",
+    "doc_type": "payslip",
+    "label": "font_inconsistency",
+    "variant": "size",
+    "template": "P2",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "font_inconsistent"
+    ],
+    "anomaly_score": 10.612591,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0228",
+    "doc_type": "payslip",
+    "label": "font_inconsistency",
+    "variant": "family",
+    "template": "P3",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "font_inconsistent"
+    ],
+    "anomaly_score": 12.24487,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0229",
+    "doc_type": "payslip",
+    "label": "font_inconsistency",
+    "variant": "size",
+    "template": "P1",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "font_inconsistent"
+    ],
+    "anomaly_score": 18.060828,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0230",
+    "doc_type": "payslip",
+    "label": "metadata_modified",
+    "variant": "editor_incremental",
+    "template": "P1",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "pdf_editor_producer",
+     "pdf_incremental_update",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 14.751508,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0231",
+    "doc_type": "payslip",
+    "label": "metadata_modified",
+    "variant": "full_rewrite",
+    "template": "P2",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 7.401622,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0232",
+    "doc_type": "payslip",
+    "label": "metadata_modified",
+    "variant": "editor_incremental",
+    "template": "P3",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "pdf_editor_producer",
+     "pdf_incremental_update",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 13.381907,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0233",
+    "doc_type": "payslip",
+    "label": "metadata_modified",
+    "variant": "full_rewrite",
+    "template": "P1",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 13.753702,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0234",
+    "doc_type": "payslip",
+    "label": "metadata_modified",
+    "variant": "editor_incremental",
+    "template": "P2",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "pdf_editor_producer",
+     "pdf_incremental_update",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 5.925449,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0235",
+    "doc_type": "payslip",
+    "label": "metadata_modified",
+    "variant": "full_rewrite",
+    "template": "P3",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 11.202076,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0236",
+    "doc_type": "payslip",
+    "label": "metadata_modified",
+    "variant": "editor_incremental",
+    "template": "P1",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "pdf_editor_producer",
+     "pdf_incremental_update",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 27.776446,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0237",
+    "doc_type": "payslip",
+    "label": "metadata_modified",
+    "variant": "full_rewrite",
+    "template": "P2",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 9.904643,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0238",
+    "doc_type": "payslip",
+    "label": "metadata_modified",
+    "variant": "editor_incremental",
+    "template": "P3",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "pdf_editor_producer",
+     "pdf_incremental_update",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 16.631762,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0239",
+    "doc_type": "payslip",
+    "label": "metadata_modified",
+    "variant": "full_rewrite",
+    "template": "P1",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 15.954369,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0240",
+    "doc_type": "payslip",
+    "label": "invalid_nric",
+    "variant": "fabricated",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "nric_invalid"
+    ],
+    "anomaly_score": 2.805434,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R02"
+    ]
+   },
+   {
+    "id": "test-0241",
+    "doc_type": "payslip",
+    "label": "invalid_nric",
+    "variant": "fabricated",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "nric_invalid"
+    ],
+    "anomaly_score": 0.95532,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R02"
+    ]
+   },
+   {
+    "id": "test-0242",
+    "doc_type": "payslip",
+    "label": "invalid_nric",
+    "variant": "fabricated",
+    "template": "P3",
+    "decision": "reject",
+    "codes": [
+     "nric_invalid"
+    ],
+    "anomaly_score": 1.099958,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R02"
+    ]
+   },
+   {
+    "id": "test-0243",
+    "doc_type": "payslip",
+    "label": "invalid_nric",
+    "variant": "fabricated",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "nric_invalid"
+    ],
+    "anomaly_score": 0.249617,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R02"
+    ]
+   },
+   {
+    "id": "test-0244",
+    "doc_type": "payslip",
+    "label": "invalid_nric",
+    "variant": "fabricated",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "nric_invalid"
+    ],
+    "anomaly_score": 2.482801,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R02"
+    ]
+   },
+   {
+    "id": "test-0245",
+    "doc_type": "payslip",
+    "label": "invalid_nric",
+    "variant": "fabricated",
+    "template": "P3",
+    "decision": "reject",
+    "codes": [
+     "nric_invalid"
+    ],
+    "anomaly_score": 1.525895,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R02"
+    ]
+   },
+   {
+    "id": "test-0246",
+    "doc_type": "payslip",
+    "label": "invalid_nric",
+    "variant": "fabricated",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "nric_invalid"
+    ],
+    "anomaly_score": 1.27722,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R02"
+    ]
+   },
+   {
+    "id": "test-0247",
+    "doc_type": "payslip",
+    "label": "invalid_nric",
+    "variant": "fabricated",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "nric_invalid"
+    ],
+    "anomaly_score": 0.674484,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R02"
+    ]
+   },
+   {
+    "id": "test-0248",
+    "doc_type": "payslip",
+    "label": "invalid_nric",
+    "variant": "fabricated",
+    "template": "P3",
+    "decision": "reject",
+    "codes": [
+     "nric_invalid"
+    ],
+    "anomaly_score": 1.210666,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R02"
+    ]
+   },
+   {
+    "id": "test-0249",
+    "doc_type": "payslip",
+    "label": "invalid_nric",
+    "variant": "fabricated",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "nric_invalid"
+    ],
+    "anomaly_score": 1.453321,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R02"
+    ]
+   },
+   {
+    "id": "test-0250",
+    "doc_type": "payslip",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 1.226059,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0251",
+    "doc_type": "payslip",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 2.042172,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0252",
+    "doc_type": "payslip",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "P3",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 0.790329,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0253",
+    "doc_type": "payslip",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 2.715972,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0254",
+    "doc_type": "payslip",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 0.897326,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0255",
+    "doc_type": "payslip",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "P3",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 2.940038,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0256",
+    "doc_type": "payslip",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 0.864324,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0257",
+    "doc_type": "payslip",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 1.164416,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0258",
+    "doc_type": "payslip",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "P3",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 1.058683,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0259",
+    "doc_type": "payslip",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 1.302572,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0260",
+    "doc_type": "payslip",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 1.585141,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0261",
+    "doc_type": "payslip",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 1.525895,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0262",
+    "doc_type": "payslip",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "P3",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 1.563625,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0263",
+    "doc_type": "payslip",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 2.371502,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0264",
+    "doc_type": "payslip",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 1.184161,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0265",
+    "doc_type": "payslip",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "P3",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 2.021128,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0266",
+    "doc_type": "payslip",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 1.688407,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0267",
+    "doc_type": "payslip",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 1.450699,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0268",
+    "doc_type": "payslip",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "P3",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 1.755926,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0269",
+    "doc_type": "payslip",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 2.858942,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0270",
+    "doc_type": "payslip",
+    "label": "duplicate_resubmission",
+    "variant": "identity_swapped",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant"
+    ],
+    "anomaly_score": 2.215119,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0271",
+    "doc_type": "payslip",
+    "label": "duplicate_resubmission",
+    "variant": "exact_copy",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant",
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 0.8744,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04",
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0272",
+    "doc_type": "payslip",
+    "label": "duplicate_resubmission",
+    "variant": "identity_swapped",
+    "template": "P3",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant"
+    ],
+    "anomaly_score": 0.951973,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0273",
+    "doc_type": "payslip",
+    "label": "duplicate_resubmission",
+    "variant": "exact_copy",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant",
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 0.644517,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04",
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0274",
+    "doc_type": "payslip",
+    "label": "duplicate_resubmission",
+    "variant": "identity_swapped",
+    "template": "P1",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant"
+    ],
+    "anomaly_score": 0.674484,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0275",
+    "doc_type": "payslip",
+    "label": "duplicate_resubmission",
+    "variant": "exact_copy",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant",
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 2.61542,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04",
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0276",
+    "doc_type": "payslip",
+    "label": "duplicate_resubmission",
+    "variant": "identity_swapped",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant"
+    ],
+    "anomaly_score": 2.215119,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0277",
+    "doc_type": "payslip",
+    "label": "duplicate_resubmission",
+    "variant": "exact_copy",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant",
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 1.744797,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04",
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0278",
+    "doc_type": "payslip",
+    "label": "duplicate_resubmission",
+    "variant": "identity_swapped",
+    "template": "P2",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant"
+    ],
+    "anomaly_score": 1.601958,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0279",
+    "doc_type": "payslip",
+    "label": "duplicate_resubmission",
+    "variant": "exact_copy",
+    "template": "P3",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant",
+     "name_mismatch",
+     "nric_mismatch"
+    ],
+    "anomaly_score": 1.410027,
+    "extraction": [
+     15,
+     0,
+     0
+    ],
+    "reasons": [
+     "R03",
+     "R04",
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0280",
+    "doc_type": "bank_statement",
+    "label": "arithmetic",
+    "variant": "credit_only",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 1.503965,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01"
+    ]
+   },
+   {
+    "id": "test-0281",
+    "doc_type": "bank_statement",
+    "label": "arithmetic",
+    "variant": "closing_only",
+    "template": "S2",
+    "decision": "reject",
+    "codes": [
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 4.611052,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01"
+    ]
+   },
+   {
+    "id": "test-0282",
+    "doc_type": "bank_statement",
+    "label": "arithmetic",
+    "variant": "credit_only",
+    "template": "S3",
+    "decision": "reject",
+    "codes": [
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 3.003436,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01"
+    ]
+   },
+   {
+    "id": "test-0283",
+    "doc_type": "bank_statement",
+    "label": "arithmetic",
+    "variant": "closing_only",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 1.348981,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01"
+    ]
+   },
+   {
+    "id": "test-0284",
+    "doc_type": "bank_statement",
+    "label": "arithmetic",
+    "variant": "credit_only",
+    "template": "S2",
+    "decision": "reject",
+    "codes": [
+     "anomaly_score_high",
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 5.552625,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01",
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0285",
+    "doc_type": "bank_statement",
+    "label": "arithmetic",
+    "variant": "closing_only",
+    "template": "S3",
+    "decision": "reject",
+    "codes": [
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 3.346986,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01"
+    ]
+   },
+   {
+    "id": "test-0286",
+    "doc_type": "bank_statement",
+    "label": "arithmetic",
+    "variant": "credit_only",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 2.023472,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01"
+    ]
+   },
+   {
+    "id": "test-0287",
+    "doc_type": "bank_statement",
+    "label": "arithmetic",
+    "variant": "closing_only",
+    "template": "S2",
+    "decision": "reject",
+    "codes": [
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 1.654826,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01"
+    ]
+   },
+   {
+    "id": "test-0288",
+    "doc_type": "bank_statement",
+    "label": "arithmetic",
+    "variant": "credit_only",
+    "template": "S3",
+    "decision": "reject",
+    "codes": [
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 1.476837,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01"
+    ]
+   },
+   {
+    "id": "test-0289",
+    "doc_type": "bank_statement",
+    "label": "arithmetic",
+    "variant": "closing_only",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "arithmetic_mismatch"
+    ],
+    "anomaly_score": 2.489057,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R01"
+    ]
+   },
+   {
+    "id": "test-0290",
+    "doc_type": "bank_statement",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.657954,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0291",
+    "doc_type": "bank_statement",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.348981,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0292",
+    "doc_type": "bank_statement",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.053589,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0293",
+    "doc_type": "bank_statement",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "S1",
+    "decision": "manual_review",
+    "codes": [
+     "anomaly_score_high"
+    ],
+    "anomaly_score": 5.654817,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R12"
+    ]
+   },
+   {
+    "id": "test-0294",
+    "doc_type": "bank_statement",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.278178,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0295",
+    "doc_type": "bank_statement",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 2.017688,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0296",
+    "doc_type": "bank_statement",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 4.428966,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0297",
+    "doc_type": "bank_statement",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "S2",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.348981,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0298",
+    "doc_type": "bank_statement",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "S3",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.193284,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0299",
+    "doc_type": "bank_statement",
+    "label": "consistent_forgery",
+    "variant": "recomputed",
+    "template": "S1",
+    "decision": "auto_accept",
+    "codes": [],
+    "anomaly_score": 1.69364,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": []
+   },
+   {
+    "id": "test-0300",
+    "doc_type": "bank_statement",
+    "label": "font_inconsistency",
+    "variant": "family",
+    "template": "S1",
+    "decision": "manual_review",
+    "codes": [
+     "font_inconsistent"
+    ],
+    "anomaly_score": 2.212782,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11"
+    ]
+   },
+   {
+    "id": "test-0301",
+    "doc_type": "bank_statement",
+    "label": "font_inconsistency",
+    "variant": "size",
+    "template": "S2",
+    "decision": "manual_review",
+    "codes": [
+     "font_inconsistent"
+    ],
+    "anomaly_score": 1.056599,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11"
+    ]
+   },
+   {
+    "id": "test-0302",
+    "doc_type": "bank_statement",
+    "label": "font_inconsistency",
+    "variant": "family",
+    "template": "S3",
+    "decision": "manual_review",
+    "codes": [
+     "font_inconsistent"
+    ],
+    "anomaly_score": 1.056964,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11"
+    ]
+   },
+   {
+    "id": "test-0303",
+    "doc_type": "bank_statement",
+    "label": "font_inconsistency",
+    "variant": "size",
+    "template": "S1",
+    "decision": "manual_review",
+    "codes": [
+     "font_inconsistent"
+    ],
+    "anomaly_score": 2.678361,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11"
+    ]
+   },
+   {
+    "id": "test-0304",
+    "doc_type": "bank_statement",
+    "label": "font_inconsistency",
+    "variant": "family",
+    "template": "S2",
+    "decision": "manual_review",
+    "codes": [
+     "font_inconsistent"
+    ],
+    "anomaly_score": 2.733269,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11"
+    ]
+   },
+   {
+    "id": "test-0305",
+    "doc_type": "bank_statement",
+    "label": "font_inconsistency",
+    "variant": "size",
+    "template": "S3",
+    "decision": "manual_review",
+    "codes": [
+     "font_inconsistent"
+    ],
+    "anomaly_score": 1.036372,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11"
+    ]
+   },
+   {
+    "id": "test-0306",
+    "doc_type": "bank_statement",
+    "label": "font_inconsistency",
+    "variant": "family",
+    "template": "S1",
+    "decision": "manual_review",
+    "codes": [
+     "font_inconsistent"
+    ],
+    "anomaly_score": 1.348981,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11"
+    ]
+   },
+   {
+    "id": "test-0307",
+    "doc_type": "bank_statement",
+    "label": "font_inconsistency",
+    "variant": "size",
+    "template": "S2",
+    "decision": "manual_review",
+    "codes": [
+     "font_inconsistent"
+    ],
+    "anomaly_score": 1.240499,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11"
+    ]
+   },
+   {
+    "id": "test-0308",
+    "doc_type": "bank_statement",
+    "label": "font_inconsistency",
+    "variant": "family",
+    "template": "S3",
+    "decision": "manual_review",
+    "codes": [
+     "font_inconsistent"
+    ],
+    "anomaly_score": 1.067081,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11"
+    ]
+   },
+   {
+    "id": "test-0309",
+    "doc_type": "bank_statement",
+    "label": "font_inconsistency",
+    "variant": "size",
+    "template": "S1",
+    "decision": "manual_review",
+    "codes": [
+     "font_inconsistent"
+    ],
+    "anomaly_score": 1.686226,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R11"
+    ]
+   },
+   {
+    "id": "test-0310",
+    "doc_type": "bank_statement",
+    "label": "metadata_modified",
+    "variant": "editor_incremental",
+    "template": "S1",
+    "decision": "manual_review",
+    "codes": [
+     "pdf_editor_producer",
+     "pdf_incremental_update",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 2.256648,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10"
+    ]
+   },
+   {
+    "id": "test-0311",
+    "doc_type": "bank_statement",
+    "label": "metadata_modified",
+    "variant": "full_rewrite",
+    "template": "S2",
+    "decision": "manual_review",
+    "codes": [
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 1.348981,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10"
+    ]
+   },
+   {
+    "id": "test-0312",
+    "doc_type": "bank_statement",
+    "label": "metadata_modified",
+    "variant": "editor_incremental",
+    "template": "S3",
+    "decision": "manual_review",
+    "codes": [
+     "pdf_editor_producer",
+     "pdf_incremental_update",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 2.32635,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10"
+    ]
+   },
+   {
+    "id": "test-0313",
+    "doc_type": "bank_statement",
+    "label": "metadata_modified",
+    "variant": "full_rewrite",
+    "template": "S1",
+    "decision": "manual_review",
+    "codes": [
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 2.544211,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10"
+    ]
+   },
+   {
+    "id": "test-0314",
+    "doc_type": "bank_statement",
+    "label": "metadata_modified",
+    "variant": "editor_incremental",
+    "template": "S2",
+    "decision": "manual_review",
+    "codes": [
+     "pdf_editor_producer",
+     "pdf_incremental_update",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 1.402706,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10"
+    ]
+   },
+   {
+    "id": "test-0315",
+    "doc_type": "bank_statement",
+    "label": "metadata_modified",
+    "variant": "full_rewrite",
+    "template": "S3",
+    "decision": "manual_review",
+    "codes": [
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 1.98836,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10"
+    ]
+   },
+   {
+    "id": "test-0316",
+    "doc_type": "bank_statement",
+    "label": "metadata_modified",
+    "variant": "editor_incremental",
+    "template": "S1",
+    "decision": "manual_review",
+    "codes": [
+     "pdf_editor_producer",
+     "pdf_incremental_update",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 3.721389,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10"
+    ]
+   },
+   {
+    "id": "test-0317",
+    "doc_type": "bank_statement",
+    "label": "metadata_modified",
+    "variant": "full_rewrite",
+    "template": "S2",
+    "decision": "manual_review",
+    "codes": [
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 1.320766,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10"
+    ]
+   },
+   {
+    "id": "test-0318",
+    "doc_type": "bank_statement",
+    "label": "metadata_modified",
+    "variant": "editor_incremental",
+    "template": "S3",
+    "decision": "manual_review",
+    "codes": [
+     "pdf_editor_producer",
+     "pdf_incremental_update",
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 1.052632,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10"
+    ]
+   },
+   {
+    "id": "test-0319",
+    "doc_type": "bank_statement",
+    "label": "metadata_modified",
+    "variant": "full_rewrite",
+    "template": "S1",
+    "decision": "manual_review",
+    "codes": [
+     "pdf_rewritten_after_creation"
+    ],
+    "anomaly_score": 2.554228,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R10"
+    ]
+   },
+   {
+    "id": "test-0320",
+    "doc_type": "bank_statement",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 1.686226,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0321",
+    "doc_type": "bank_statement",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "S2",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 2.023472,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0322",
+    "doc_type": "bank_statement",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "S3",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 1.28614,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0323",
+    "doc_type": "bank_statement",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 0.915067,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0324",
+    "doc_type": "bank_statement",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "S2",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 2.750598,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0325",
+    "doc_type": "bank_statement",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "S3",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 1.011736,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0326",
+    "doc_type": "bank_statement",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 2.700901,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0327",
+    "doc_type": "bank_statement",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "S2",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 1.686226,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0328",
+    "doc_type": "bank_statement",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "S3",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 1.860589,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0329",
+    "doc_type": "bank_statement",
+    "label": "period_mismatch",
+    "variant": "relabelled",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "date_outside_period"
+    ],
+    "anomaly_score": 2.023472,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R05"
+    ]
+   },
+   {
+    "id": "test-0330",
+    "doc_type": "bank_statement",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch"
+    ],
+    "anomaly_score": 1.036382,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0331",
+    "doc_type": "bank_statement",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "S2",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch"
+    ],
+    "anomaly_score": 1.686226,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0332",
+    "doc_type": "bank_statement",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "S3",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch"
+    ],
+    "anomaly_score": 1.49629,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0333",
+    "doc_type": "bank_statement",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch"
+    ],
+    "anomaly_score": 1.054739,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0334",
+    "doc_type": "bank_statement",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "S2",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch"
+    ],
+    "anomaly_score": 2.697962,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0335",
+    "doc_type": "bank_statement",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "S3",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch"
+    ],
+    "anomaly_score": 0.916396,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0336",
+    "doc_type": "bank_statement",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch"
+    ],
+    "anomaly_score": 3.431511,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0337",
+    "doc_type": "bank_statement",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "S2",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch"
+    ],
+    "anomaly_score": 2.475118,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0338",
+    "doc_type": "bank_statement",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "S3",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch"
+    ],
+    "anomaly_score": 2.91975,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0339",
+    "doc_type": "bank_statement",
+    "label": "name_mismatch",
+    "variant": "other_person",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "name_mismatch"
+    ],
+    "anomaly_score": 2.023472,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04"
+    ]
+   },
+   {
+    "id": "test-0340",
+    "doc_type": "bank_statement",
+    "label": "duplicate_resubmission",
+    "variant": "identity_swapped",
+    "template": "S3",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant"
+    ],
+    "anomaly_score": 0.703367,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0341",
+    "doc_type": "bank_statement",
+    "label": "duplicate_resubmission",
+    "variant": "exact_copy",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant",
+     "name_mismatch"
+    ],
+    "anomaly_score": 2.337515,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04",
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0342",
+    "doc_type": "bank_statement",
+    "label": "duplicate_resubmission",
+    "variant": "identity_swapped",
+    "template": "S2",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant"
+    ],
+    "anomaly_score": 0.472921,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0343",
+    "doc_type": "bank_statement",
+    "label": "duplicate_resubmission",
+    "variant": "exact_copy",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant",
+     "name_mismatch"
+    ],
+    "anomaly_score": 0.844003,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04",
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0344",
+    "doc_type": "bank_statement",
+    "label": "duplicate_resubmission",
+    "variant": "identity_swapped",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant"
+    ],
+    "anomaly_score": 1.686226,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0345",
+    "doc_type": "bank_statement",
+    "label": "duplicate_resubmission",
+    "variant": "exact_copy",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant",
+     "name_mismatch"
+    ],
+    "anomaly_score": 1.155568,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04",
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0346",
+    "doc_type": "bank_statement",
+    "label": "duplicate_resubmission",
+    "variant": "identity_swapped",
+    "template": "S3",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant"
+    ],
+    "anomaly_score": 1.028198,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0347",
+    "doc_type": "bank_statement",
+    "label": "duplicate_resubmission",
+    "variant": "exact_copy",
+    "template": "S2",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant",
+     "name_mismatch",
+     "pdf_modified_after_creation"
+    ],
+    "anomaly_score": 1.299542,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04",
+     "R06"
+    ]
+   },
+   {
+    "id": "test-0348",
+    "doc_type": "bank_statement",
+    "label": "duplicate_resubmission",
+    "variant": "identity_swapped",
+    "template": "S1",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant",
+     "name_partial_match",
+     "pdf_modified_after_creation"
+    ],
+    "anomaly_score": 1.404596,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R06",
+     "R14"
+    ]
+   },
+   {
+    "id": "test-0349",
+    "doc_type": "bank_statement",
+    "label": "duplicate_resubmission",
+    "variant": "exact_copy",
+    "template": "S3",
+    "decision": "reject",
+    "codes": [
+     "duplicate_other_applicant",
+     "name_mismatch"
+    ],
+    "anomaly_score": 1.065667,
+    "extraction": [
+     10,
+     0,
+     0
+    ],
+    "reasons": [
+     "R04",
+     "R06"
+    ]
+   }
+  ]
+ },
+ "dev": {
+  "metadata": {
+   "split": "dev",
+   "n_documents": 350,
+   "corpus_hash": "ec3957609095",
+   "rules_version": "doc-rules-v1",
+   "anomaly_model": "genuine documents of the dev split (seed 11, corpus ec3957609095)",
+   "disabled_checks": [],
+   "source_fingerprint": "d353b2c11a99",
+   "prevalence_assumed": 0.02
+  },
+  "metrics": {
+   "n_genuine": 200,
+   "n_tampered": 150,
+   "genuine_auto_accept_rate": 0.94,
+   "genuine_review_rate": 0.06,
+   "genuine_reject_rate": 0.0,
+   "tamper_detection_rate": 0.9533333333333334,
+   "tamper_reject_rate": 0.6,
+   "recall_arithmetic": 1.0,
+   "recall_consistent_forgery": 0.65,
+   "recall_font_inconsistency": 1.0,
+   "recall_metadata_modified": 1.0,
+   "recall_invalid_nric": 1.0,
+   "recall_period_mismatch": 1.0,
+   "recall_name_mismatch": 1.0,
+   "recall_duplicate_resubmission": 1.0,
+   "automation_rate": 0.8142857142857143,
+   "auto_decision_error_rate": 0.02456140350877193,
+   "expected_automation_rate": 0.9345749999999999,
+   "expected_auto_error_rate": 0.0009362544472086234,
+   "extraction_precision": 1.0,
+   "extraction_recall": 1.0,
+   "extraction_f1": 1.0,
+   "extraction_doc_exact_rate": 1.0,
+   "anomaly_auroc": 0.8340416666666667
+  }
+ },
+ "anomaly_model": {
+  "version": 2,
+  "trained_on": "genuine documents of the dev split (seed 11, corpus ec3957609095)",
+  "quantile": 0.97,
+  "seed": 0,
+  "n_trees": 300,
+  "models": {
+   "payslip": {
+    "method": "robust_z",
+    "features": [
+     "log_gross",
+     "pcb_vs_schedule",
+     "net_ratio",
+     "allowance_ratio"
+    ],
+    "n_train": 100,
+    "n_dev_tampered": 30,
+    "threshold": 3.823771,
+    "comparison": [
+     {
+      "method": "robust_z",
+      "threshold": 3.823771,
+      "dev_genuine_flag_rate": 0.03,
+      "dev_tamper_recall": 1.0,
+      "dev_auroc": 1.0
+     },
+     {
+      "method": "iforest",
+      "threshold": 0.61072,
+      "dev_genuine_flag_rate": 0.03,
+      "dev_tamper_recall": 0.0333,
+      "dev_auroc": 0.8507
+     }
+    ]
+   },
+   "bank_statement": {
+    "method": "robust_z",
+    "features": [
+     "log_opening",
+     "log_credits",
+     "log_debits",
+     "credit_debit_log_ratio",
+     "closing_vs_opening",
+     "n_transactions",
+     "largest_credit_share"
+    ],
+    "n_train": 100,
+    "n_dev_tampered": 30,
+    "threshold": 5.030721,
+    "comparison": [
+     {
+      "method": "robust_z",
+      "threshold": 5.030721,
+      "dev_genuine_flag_rate": 0.03,
+      "dev_tamper_recall": 0.0667,
+      "dev_auroc": 0.6242
+     },
+     {
+      "method": "iforest",
+      "threshold": 0.61598,
+      "dev_genuine_flag_rate": 0.03,
+      "dev_tamper_recall": 0.0,
+      "dev_auroc": 0.5837
+     }
+    ]
+   }
+  }
+ },
+ "gates": [
+  {
+   "metric": "genuine_reject_rate",
+   "value": 0.0,
+   "op": "<=",
+   "threshold": 0.0,
+   "passed": true,
+   "why": "Auto-rejection must rest on hard evidence; no genuine document may be auto-rejected."
+  },
+  {
+   "metric": "auto_decision_error_rate",
+   "value": 0.030821917808219176,
+   "op": "<=",
+   "threshold": 0.05,
+   "passed": true,
+   "why": "When the machine decides alone it must almost always be right (corpus mix)."
+  },
+  {
+   "metric": "extraction_f1",
+   "value": 1.0,
+   "op": ">=",
+   "threshold": 0.99,
+   "passed": true,
+   "why": "Text-layer extraction, including the held-out layouts P3 and S3."
+  },
+  {
+   "metric": "recall_arithmetic",
+   "value": 1.0,
+   "op": ">=",
+   "threshold": 0.95,
+   "passed": true,
+   "why": "Rule-detectable: totals that do not add up."
+  },
+  {
+   "metric": "recall_invalid_nric",
+   "value": 1.0,
+   "op": ">=",
+   "threshold": 0.95,
+   "passed": true,
+   "why": "Rule-detectable: impossible MyKad number."
+  },
+  {
+   "metric": "recall_period_mismatch",
+   "value": 1.0,
+   "op": ">=",
+   "threshold": 0.95,
+   "passed": true,
+   "why": "Rule-detectable: dates contradict the stated period."
+  },
+  {
+   "metric": "recall_name_mismatch",
+   "value": 1.0,
+   "op": ">=",
+   "threshold": 0.95,
+   "passed": true,
+   "why": "Rule-detectable: someone else's document."
+  },
+  {
+   "metric": "recall_duplicate_resubmission",
+   "value": 1.0,
+   "op": ">=",
+   "threshold": 0.95,
+   "passed": true,
+   "why": "Registry: same document from another applicant."
+  },
+  {
+   "metric": "recall_font_inconsistency",
+   "value": 1.0,
+   "op": ">=",
+   "threshold": 0.9,
+   "passed": true,
+   "why": "Forensic: edited amounts in another font or size."
+  },
+  {
+   "metric": "recall_metadata_modified",
+   "value": 1.0,
+   "op": ">=",
+   "threshold": 0.9,
+   "passed": true,
+   "why": "Forensic: saved again by an editing tool."
+  },
+  {
+   "metric": "recall_consistent_forgery",
+   "value": 0.55,
+   "op": ">=",
+   "threshold": 0.4,
+   "passed": true,
+   "why": "KNOWN WEAKNESS: only the anomaly score can see it; dev 65% (payslips 10/10, statements 3/10). Floor below dev."
+  },
+  {
+   "metric": "genuine_auto_accept_rate",
+   "value": 0.965,
+   "op": ">=",
+   "threshold": 0.9,
+   "passed": true,
+   "why": "At most ~1 in 10 genuine documents sent to a human."
+  }
+ ]
+}

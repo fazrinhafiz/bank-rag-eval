@@ -1,0 +1,27 @@
+# Gates for document verification, enforced by `python -m bankrag doc-eval` on the TEST split (exit 1 on failure).
+#
+# Written after one exploratory test run with the FIRST anomaly model (IsolationForest, which caught 0% of
+# consistent forgeries on dev and test) and BEFORE the test split was run with the redesigned model, which
+# was chosen on dev. Floors are set from dev results and from policy, not from the final test numbers.
+#
+# Read with the report's caveat: the corpus is synthetic and the tampering was written by the same author as
+# the checks, so recall on rule-detectable kinds is close to true by construction. These gates exist to stop
+# regressions (a check silently disabled, a parser broken by a refactor), which is what the mutation tests
+# in tests/test_docverify_gates.py prove they do.
+gates:
+  # --- safety (absolute) ---
+  genuine_reject_rate:            {max: 0.0,  why: "Auto-rejection must rest on hard evidence; no genuine document may be auto-rejected."}
+  auto_decision_error_rate:       {max: 0.05, why: "When the machine decides alone it must almost always be right (corpus mix)."}
+  # --- extraction ---
+  extraction_f1:                  {min: 0.99, why: "Text-layer extraction, including the held-out layouts P3 and S3."}
+  # --- detection by kind (regression floors) ---
+  recall_arithmetic:              {min: 0.95, why: "Rule-detectable: totals that do not add up."}
+  recall_invalid_nric:            {min: 0.95, why: "Rule-detectable: impossible MyKad number."}
+  recall_period_mismatch:         {min: 0.95, why: "Rule-detectable: dates contradict the stated period."}
+  recall_name_mismatch:           {min: 0.95, why: "Rule-detectable: someone else's document."}
+  recall_duplicate_resubmission:  {min: 0.95, why: "Registry: same document from another applicant."}
+  recall_font_inconsistency:      {min: 0.90, why: "Forensic: edited amounts in another font or size."}
+  recall_metadata_modified:       {min: 0.90, why: "Forensic: saved again by an editing tool."}
+  recall_consistent_forgery:      {min: 0.40, why: "KNOWN WEAKNESS: only the anomaly score can see it; dev 65% (payslips 10/10, statements 3/10). Floor below dev."}
+  # --- cost of review ---
+  genuine_auto_accept_rate:       {min: 0.90, why: "At most ~1 in 10 genuine documents sent to a human."}

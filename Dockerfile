@@ -14,14 +14,16 @@ WORKDIR /app
 # Dependencies first so code changes don't invalidate the install layer.
 COPY pyproject.toml README.md LICENSE ./
 COPY src ./src
-RUN pip install ".[api]"
+RUN pip install ".[api,docs]"
 
 # Everything the service reads at runtime. eval/ is included only so /health reports the same
 # source_fingerprint as the eval reports, which ties a running container to the results it was gated on.
 COPY config.yaml ./
 COPY prompts ./prompts
 COPY data/docs ./data/docs
-COPY eval/golden_set.jsonl eval/thresholds.yaml ./eval/
+COPY rules ./rules
+COPY data/docverify ./data/docverify
+COPY eval/golden_set.jsonl eval/thresholds.yaml eval/docverify_thresholds.yaml ./eval/
 
 RUN useradd --create-home --uid 10001 app && mkdir -p /app/traces && chown app /app/traces
 USER 10001
