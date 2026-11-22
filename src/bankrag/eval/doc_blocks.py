@@ -138,10 +138,17 @@ DOCS = ("README.md", "docs/MODEL_CARD.md")
 _MARKER = re.compile(r"<!-- generated:(\w+):start -->\n(?:.*?\n)?<!-- generated:\1:end -->", re.S)
 
 
-def render(text: str, root: Path) -> str:
+_LINK = re.compile(r"\]\((?!https?:|#|/)([^)]+)\)")
+
+
+def render(text: str, root: Path, rel: str = "README.md") -> str:
+    """Blocks are written with links relative to the repo root; rebase them for docs in subfolders."""
+    up = "../" * rel.count("/")
+
     def block(m):
         name = m.group(1)
-        return f"<!-- generated:{name}:start -->\n{BLOCKS[name](root)}\n<!-- generated:{name}:end -->"
+        body = _LINK.sub(lambda l: f"]({up}{l.group(1)})", BLOCKS[name](root)) if up else BLOCKS[name](root)
+        return f"<!-- generated:{name}:start -->\n{body}\n<!-- generated:{name}:end -->"
     return _MARKER.sub(block, text)
 
 
@@ -152,7 +159,7 @@ def sync(root: Path, check: bool = False) -> list[str]:
         if not path.exists():
             continue
         old = path.read_text()
-        new = render(old, root)
+        new = render(old, root, rel)
         if new != old:
             stale.append(rel)
             if not check:

@@ -1,0 +1,612 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "bankrag",
+    "description": "Guarded policy Q&A for the fictional Bank Seri Andalas Berhad.",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Liveness and the versions behind every answer",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Health"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ask": {
+      "post": {
+        "summary": "Answer one policy question",
+        "description": "Runs the guarded pipeline: mask PII, block injections, retrieve, abstain below the calibrated\nthreshold, generate with citations, check the output. The question is never echoed back or logged.",
+        "operationId": "ask_ask_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AskRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AskResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error, or the audit record could not be written. No decision is returned without its audit record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/documents/verify": {
+      "post": {
+        "summary": "Check a payslip or bank statement",
+        "description": "Extracts the fields, checks them against each other, the application, earlier submissions and the\nfile's own history, then applies the rule policy. Unreadable or unsupported documents come back as\nmanual_review (fail closed), not as an error. Re-sending the same document for the same application\nis safe: it does not count as a duplicate.",
+        "operationId": "verify_document_documents_verify_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VerifyResponse"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Document larger than docverify.max_upload_mb.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Document verification is not installed in this image.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unhandled error, or the audit record could not be written. No decision is returned without its audit record.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalError"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Application": {
+        "properties": {
+          "application_id": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9._-]{1,64}$",
+            "title": "Application Id",
+            "description": "Your loan application id. Duplicate detection compares documents across applications."
+          },
+          "applicant_name": {
+            "type": "string",
+            "maxLength": 200,
+            "minLength": 1,
+            "title": "Applicant Name",
+            "description": "As on the application; compared with the name on the document."
+          },
+          "nric": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 20
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Nric",
+            "description": "Optional MyKad number (with or without dashes). Without it, identity is checked by name only."
+          },
+          "application_date": {
+            "type": "string",
+            "format": "date",
+            "title": "Application Date",
+            "description": "Dates on the document are checked against this date (stale or future-dated documents)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "application_id",
+          "applicant_name",
+          "application_date"
+        ],
+        "title": "Application"
+      },
+      "AskRequest": {
+        "properties": {
+          "question": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Question",
+            "description": "Customer question. PII is masked before processing."
+          }
+        },
+        "type": "object",
+        "required": [
+          "question"
+        ],
+        "title": "AskRequest"
+      },
+      "AskResponse": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "title": "Request Id",
+            "description": "Your X-Request-ID, or the one generated for this call."
+          },
+          "answer": {
+            "type": "string",
+            "title": "Answer",
+            "description": "The answer with [doc_id#section] citations, or the abstention / refusal text to show instead."
+          },
+          "outcome": {
+            "type": "string",
+            "title": "Outcome",
+            "description": "answered | abstained | blocked"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason",
+            "description": "ok | low_confidence | generator_abstained | citation_missing | pii_leak_blocked | injection_blocked"
+          },
+          "confidence": {
+            "type": "number",
+            "title": "Confidence",
+            "description": "Retrieval confidence (normalised score, not a probability). Below the calibrated threshold the service abstains."
+          },
+          "citations": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Citations",
+            "description": "Policy sections the answer is drawn from, as doc_id#section."
+          },
+          "prompt_version": {
+            "type": "string",
+            "title": "Prompt Version",
+            "description": "Version of the prompt that produced the answer."
+          },
+          "model": {
+            "type": "string",
+            "title": "Model",
+            "description": "Generator that produced the answer (offline-extractive-v1 for the baseline)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "answer",
+          "outcome",
+          "reason",
+          "confidence",
+          "citations",
+          "prompt_version",
+          "model"
+        ],
+        "title": "AskResponse"
+      },
+      "ErrorDetail": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ErrorDetail"
+      },
+      "FindingOut": {
+        "properties": {
+          "code": {
+            "type": "string",
+            "title": "Code",
+            "description": "Stable finding code, e.g. arithmetic_mismatch."
+          },
+          "source": {
+            "type": "string",
+            "title": "Source",
+            "description": "Check group that produced it: consistency | extraction | forensics | anomaly | registry | system."
+          },
+          "severity": {
+            "type": "string",
+            "title": "Severity",
+            "description": "high | medium | info. The decision comes from the rules, not from severity."
+          },
+          "detail": {
+            "type": "string",
+            "title": "Detail",
+            "description": "What was found. Never the full NRIC; may quote the invalid part, such as an impossible birth date."
+          }
+        },
+        "type": "object",
+        "required": [
+          "code",
+          "source",
+          "severity",
+          "detail"
+        ],
+        "title": "FindingOut"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "Health": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "ok when the service is up."
+          },
+          "version": {
+            "type": "string",
+            "title": "Version",
+            "description": "Package version."
+          },
+          "source_fingerprint": {
+            "type": "string",
+            "title": "Source Fingerprint",
+            "description": "Hash of the code, config, prompts, rules, documents and gates; matches the eval reports it was gated on."
+          },
+          "retrieval_mode": {
+            "type": "string",
+            "title": "Retrieval Mode",
+            "description": "bm25 | tfidf | hybrid."
+          },
+          "provider": {
+            "type": "string",
+            "title": "Provider",
+            "description": "offline | openai | azure. OpenAI-compatible servers such as Ollama use openai."
+          },
+          "prompt_version": {
+            "type": "string",
+            "title": "Prompt Version",
+            "description": "Prompt in use."
+          },
+          "abstain_threshold": {
+            "type": "number",
+            "title": "Abstain Threshold",
+            "description": "Calibrated confidence below which /ask abstains."
+          },
+          "audit_head_seq": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Audit Head Seq",
+            "description": "Events in the audit log (None if disabled)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "status",
+          "version",
+          "source_fingerprint",
+          "retrieval_mode",
+          "provider",
+          "prompt_version",
+          "abstain_threshold"
+        ],
+        "title": "Health"
+      },
+      "InternalError": {
+        "properties": {
+          "error": {
+            "type": "string",
+            "title": "Error",
+            "description": "Always internal_error. Details are in the service log under request_id."
+          },
+          "request_id": {
+            "type": "string",
+            "title": "Request Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "error",
+          "request_id"
+        ],
+        "title": "InternalError"
+      },
+      "Reason": {
+        "properties": {
+          "rule": {
+            "type": "string",
+            "title": "Rule",
+            "description": "Rule id in rules/document_rules.yaml, e.g. R01."
+          },
+          "decision": {
+            "type": "string",
+            "title": "Decision",
+            "description": "What this rule decides: manual_review | reject."
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason",
+            "description": "Plain-language reason, suitable for a reviewer."
+          },
+          "codes": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Codes",
+            "description": "The finding codes that triggered the rule."
+          }
+        },
+        "type": "object",
+        "required": [
+          "rule",
+          "decision",
+          "reason",
+          "codes"
+        ],
+        "title": "Reason"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "VerifyRequest": {
+        "properties": {
+          "application": {
+            "$ref": "#/components/schemas/Application"
+          },
+          "document_base64": {
+            "type": "string",
+            "minLength": 1,
+            "title": "Document Base64",
+            "description": "The PDF, base64-encoded. Max size: docverify.max_upload_mb."
+          }
+        },
+        "type": "object",
+        "required": [
+          "application",
+          "document_base64"
+        ],
+        "title": "VerifyRequest"
+      },
+      "VerifyResponse": {
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "title": "Request Id",
+            "description": "Your X-Request-ID, or the one generated for this call."
+          },
+          "decision": {
+            "type": "string",
+            "title": "Decision",
+            "description": "auto_accept | manual_review | reject"
+          },
+          "reasons": {
+            "items": {
+              "$ref": "#/components/schemas/Reason"
+            },
+            "type": "array",
+            "title": "Reasons",
+            "description": "Every rule that matched; empty when auto-accepted."
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/FindingOut"
+            },
+            "type": "array",
+            "title": "Findings",
+            "description": "Everything the checks found, including findings no rule acts on."
+          },
+          "doc_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Doc Type",
+            "description": "payslip | bank_statement, or null if not recognised."
+          },
+          "fields": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Fields",
+            "description": "Extracted fields; NRIC masked to the last 4 digits, transactions summarised."
+          },
+          "missing_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Missing Fields",
+            "description": "Required fields that could not be extracted (the document then goes to review)."
+          },
+          "anomaly_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anomaly Score",
+            "description": "How unusual the figures are compared with genuine documents; null if not scored."
+          },
+          "anomaly_threshold": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Anomaly Threshold",
+            "description": "Scores above this raise anomaly_score_high (manual review)."
+          },
+          "sha256": {
+            "type": "string",
+            "title": "Sha256",
+            "description": "SHA-256 of the file as received. Also in the audit log."
+          },
+          "rules_version": {
+            "type": "string",
+            "title": "Rules Version",
+            "description": "Version of rules/document_rules.yaml that made the decision."
+          },
+          "extraction_method": {
+            "type": "string",
+            "title": "Extraction Method",
+            "description": "How fields were read: text_layer, or llm when the optional LLM extractor is used."
+          }
+        },
+        "type": "object",
+        "required": [
+          "request_id",
+          "decision",
+          "reasons",
+          "findings",
+          "doc_type",
+          "fields",
+          "missing_fields",
+          "anomaly_score",
+          "anomaly_threshold",
+          "sha256",
+          "rules_version",
+          "extraction_method"
+        ],
+        "title": "VerifyResponse"
+      }
+    }
+  }
+}

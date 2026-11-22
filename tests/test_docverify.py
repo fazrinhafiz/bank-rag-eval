@@ -300,3 +300,20 @@ def test_llm_extractor_rejects_invented_values(cfg, small):
     verdict = DocumentVerifier(cfg, extractor=LLMExtractor(fake, "m")).verify(sub.pdf, sub.application)
     assert "not printed in the document" in fake.calls[1]["messages"][-1]["content"]
     assert verdict.decision == "manual_review" and "extraction_incomplete" in verdict.codes
+
+
+def test_rule_file_kill_switches():
+    """Model card B5: operations can stop automatic accept and automatic reject by editing the rules file."""
+    import yaml
+
+    from bankrag.docverify.checks import Finding
+    from bankrag.docverify.rules import RuleSet
+    from pathlib import Path
+    data = yaml.safe_load((Path(__file__).resolve().parents[1] / "rules/document_rules.yaml").read_text())
+    clean, forged = [], [Finding("arithmetic_mismatch", "x")]
+    assert RuleSet.from_dict(data).decide(clean).decision == "auto_accept"
+    no_accept = RuleSet.from_dict({**data, "default": "manual_review"})
+    assert no_accept.decide(clean).decision == "manual_review" and no_accept.decide(forged).decision == "reject"
+    no_reject = RuleSet.from_dict({**data, "rules": [{**r, "decision": "manual_review"} if r["decision"] == "reject" else r
+                                                     for r in data["rules"]]})
+    assert no_reject.decide(forged).decision == "manual_review"

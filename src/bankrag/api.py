@@ -17,6 +17,7 @@ from __future__ import annotations
 import base64
 import binascii
 import logging
+import os
 import re
 import time
 import uuid
@@ -32,7 +33,7 @@ from .config import load_config, resolve
 from .eval.harness import source_fingerprint
 from .logging_setup import configure_logging, request_id_var
 from .pipeline import Pipeline
-from .tracing import Tracer
+from .tracing import DEV_SALT, Tracer
 
 log = logging.getLogger("bankrag.api")
 _SAFE_ID = re.compile(r"^[A-Za-z0-9._-]{1,64}$")
@@ -43,21 +44,23 @@ class AskRequest(BaseModel):
 
 
 class AskResponse(BaseModel):
-    request_id: str
-    answer: str
+    request_id: str = Field(description="Your X-Request-ID, or the one generated for this call.")
+    answer: str = Field(description="The answer with [doc_id#section] citations, or the abstention / refusal text to show instead.")
     outcome: str = Field(description="answered | abstained | blocked")
     reason: str = Field(description="ok | low_confidence | generator_abstained | citation_missing | pii_leak_blocked | injection_blocked")
-    confidence: float
-    citations: list[str]
-    prompt_version: str
-    model: str
+    confidence: float = Field(description="Retrieval confidence (normalised score, not a probability). Below the calibrated threshold the service abstains.")
+    citations: list[str] = Field(description="Policy sections the answer is drawn from, as doc_id#section.")
+    prompt_version: str = Field(description="Version of the prompt that produced the answer.")
+    model: str = Field(description="Generator that produced the answer (offline-extractive-v1 for the baseline).")
 
 
 class Application(BaseModel):
-    application_id: str = Field(pattern=r"^[A-Za-z0-9._-]{1,64}$")
-    applicant_name: str = Field(min_length=1, max_length=200)
-    nric: str | None = Field(default=None, max_length=20)
-    application_date: date
+    application_id: str = Field(pattern=r"^[A-Za-z0-9._-]{1,64}$",
+                                description="Your loan application id. Duplicate detection compares documents across applications.")
+    applicant_name: str = Field(min_length=1, max_length=200, description="As on the application; compared with the name on the document.")
+    nric: str | None = Field(default=None, max_length=20,
+                             description="Optional MyKad number (with or without dashes). Without it, identity is checked by name only.")
+    application_date: date = Field(description="Dates on the document are checked against this date (stale or future-dated documents).")
 
 
 class VerifyRequest(BaseModel):
@@ -65,29 +68,56 @@ class VerifyRequest(BaseModel):
     document_base64: str = Field(min_length=1, description="The PDF, base64-encoded. Max size: docverify.max_upload_mb.")
 
 
+class Reason(BaseModel):
+    rule: str = Field(description="Rule id in rules/document_rules.yaml, e.g. R01.")
+    decision: str = Field(description="What this rule decides: manual_review | reject.")
+    reason: str = Field(description="Plain-language reason, suitable for a reviewer.")
+    codes: list[str] = Field(description="The finding codes that triggered the rule.")
+
+
+class FindingOut(BaseModel):
+    code: str = Field(description="Stable finding code, e.g. arithmetic_mismatch.")
+    source: str = Field(description="Check group that produced it: consistency | extraction | forensics | anomaly | registry | system.")
+    severity: str = Field(description="high | medium | info. The decision comes from the rules, not from severity.")
+    detail: str = Field(description="What was found. Never the full NRIC; may quote the invalid part, such as an impossible birth date.")
+
+
 class VerifyResponse(BaseModel):
-    request_id: str
+    request_id: str = Field(description="Your X-Request-ID, or the one generated for this call.")
     decision: str = Field(description="auto_accept | manual_review | reject")
-    reasons: list[dict]
-    findings: list[dict]
-    doc_type: str | None
+    reasons: list[Reason] = Field(description="Every rule that matched; empty when auto-accepted.")
+    findings: list[FindingOut] = Field(description="Everything the checks found, including findings no rule acts on.")
+    doc_type: str | None = Field(description="payslip | bank_statement, or null if not recognised.")
     fields: dict = Field(description="Extracted fields; NRIC masked to the last 4 digits, transactions summarised.")
-    missing_fields: list[str]
-    anomaly_score: float | None
-    anomaly_threshold: float | None
-    sha256: str
-    rules_version: str
-    extraction_method: str
+    missing_fields: list[str] = Field(description="Required fields that could not be extracted (the document then goes to review).")
+    anomaly_score: float | None = Field(description="How unusual the figures are compared with genuine documents; null if not scored.")
+    anomaly_threshold: float | None = Field(description="Scores above this raise anomaly_score_high (manual review).")
+    sha256: str = Field(description="SHA-256 of the file as received. Also in the audit log.")
+    rules_version: str = Field(description="Version of rules/document_rules.yaml that made the decision.")
+    extraction_method: str = Field(description="How fields were read: text_layer, or llm when the optional LLM extractor is used.")
+
+
+class ErrorDetail(BaseModel):
+    detail: str
+
+
+class InternalError(BaseModel):
+    error: str = Field(description="Always internal_error. Details are in the service log under request_id.")
+    request_id: str
+
+
+_500 = {500: {"model": InternalError, "description": "Unhandled error, or the audit record could not be written. "
+                                                     "No decision is returned without its audit record."}}
 
 
 class Health(BaseModel):
-    status: str
-    version: str
-    source_fingerprint: str
-    retrieval_mode: str
-    provider: str
-    prompt_version: str
-    abstain_threshold: float
+    status: str = Field(description="ok when the service is up.")
+    version: str = Field(description="Package version.")
+    source_fingerprint: str = Field(description="Hash of the code, config, prompts, rules, documents and gates; matches the eval reports it was gated on.")
+    retrieval_mode: str = Field(description="bm25 | tfidf | hybrid.")
+    provider: str = Field(description="offline | openai | azure. OpenAI-compatible servers such as Ollama use openai.")
+    prompt_version: str = Field(description="Prompt in use.")
+    abstain_threshold: float = Field(description="Calibrated confidence below which /ask abstains.")
     audit_head_seq: int | None = Field(default=None, description="Events in the audit log (None if disabled).")
 
 
@@ -97,6 +127,9 @@ def create_app(cfg: dict | None = None, pipeline: Pipeline | None = None) -> Fas
     audit = AuditLog(resolve(cfg, "audit_db")) if cfg.get("audit_db") else None
     if audit is not None and audit.keyed_with_dev_key:
         log.warning("audit log uses the development key", extra={"event": "config_warning", "setting": "BANKRAG_AUDIT_KEY"})
+    if os.environ.get("BANKRAG_TRACE_SALT", DEV_SALT) == DEV_SALT:
+        log.warning("trace and identity hashes use the development salt",
+                    extra={"event": "config_warning", "setting": "BANKRAG_TRACE_SALT"})
     pipe = pipeline or Pipeline(cfg, tracer=Tracer(resolve(cfg, "trace_path")), audit=audit)
     fingerprint = source_fingerprint(cfg["_root"])
     verifier = _document_verifier(cfg, audit)
@@ -122,14 +155,16 @@ def create_app(cfg: dict | None = None, pipeline: Pipeline | None = None) -> Fas
         request_id_var.reset(token)
         return response
 
-    @app.get("/health", response_model=Health)
+    @app.get("/health", response_model=Health, summary="Liveness and the versions behind every answer")
     def health() -> Health:
         return Health(status="ok", version=__version__, source_fingerprint=fingerprint, retrieval_mode=pipe.retriever.mode,
                       provider=pipe.generator.provider, prompt_version=pipe.prompt.version, abstain_threshold=pipe.threshold,
                       audit_head_seq=None if audit is None else audit.head()[0])
 
-    @app.post("/ask", response_model=AskResponse)
+    @app.post("/ask", response_model=AskResponse, summary="Answer one policy question", responses=_500)
     def ask(body: AskRequest) -> AskResponse:
+        """Runs the guarded pipeline: mask PII, block injections, retrieve, abstain below the calibrated
+        threshold, generate with citations, check the output. The question is never echoed back or logged."""
         rid = request_id_var.get()
         resp = pipe.ask(body.question, request_id=rid)
         outcome = "blocked" if resp.blocked else "abstained" if resp.abstained else "answered"
@@ -137,8 +172,15 @@ def create_app(cfg: dict | None = None, pipeline: Pipeline | None = None) -> Fas
                            confidence=round(resp.confidence, 4), citations=resp.citations,
                            prompt_version=pipe.prompt.version, model=resp.trace["model"])
 
-    @app.post("/documents/verify", response_model=VerifyResponse)
+    @app.post("/documents/verify", response_model=VerifyResponse, summary="Check a payslip or bank statement",
+              responses={413: {"model": ErrorDetail, "description": "Document larger than docverify.max_upload_mb."},
+                         503: {"model": ErrorDetail, "description": "Document verification is not installed in this image."},
+                         **_500})
     def verify_document(body: VerifyRequest) -> VerifyResponse:
+        """Extracts the fields, checks them against each other, the application, earlier submissions and the
+        file's own history, then applies the rule policy. Unreadable or unsupported documents come back as
+        manual_review (fail closed), not as an error. Re-sending the same document for the same application
+        is safe: it does not count as a duplicate."""
         if verifier is None:
             raise HTTPException(503, "document verification is not installed (pip install '.[docs]')")
         if len(body.document_base64) > max_bytes * 4 // 3 + 4:

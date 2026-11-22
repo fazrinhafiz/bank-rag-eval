@@ -7,7 +7,7 @@
    "rules_version": "doc-rules-v1",
    "anomaly_model": "genuine documents of the dev split (seed 11, corpus ec3957609095)",
    "disabled_checks": [],
-   "source_fingerprint": "0de26d4bf35c",
+   "source_fingerprint": "82ecdb3ea616",
    "prevalence_assumed": 0.02
   },
   "metrics": {
@@ -6393,7 +6393,7 @@
    "rules_version": "doc-rules-v1",
    "anomaly_model": "genuine documents of the dev split (seed 11, corpus ec3957609095)",
    "disabled_checks": [],
-   "source_fingerprint": "0de26d4bf35c",
+   "source_fingerprint": "82ecdb3ea616",
    "prevalence_assumed": 0.02
   },
   "metrics": {

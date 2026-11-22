@@ -140,3 +140,36 @@ def test_document_verify_input_errors(traced, doc_corpus):
     assert client.post("/documents/verify", json=bad_app).status_code == 422
     huge = {"application": sub.application, "document_base64": "A" * (8 * 1024 * 1024)}
     assert client.post("/documents/verify", json=huge).status_code == 413
+
+
+def test_resending_the_same_document_for_the_same_application_is_safe(traced, doc_corpus):
+    """Integration contract (docs/INTEGRATION_SPEC.md): a client retry must not be flagged as a duplicate."""
+    client, _ = traced
+    genuine = next(s for s in doc_corpus if s.label == "genuine")
+    first, second = (client.post("/documents/verify", json=_verify_body(genuine)).json() for _ in range(2))
+    assert first["decision"] == second["decision"] == "auto_accept"
+    assert not any(f["code"].startswith(("duplicate", "resubmitted")) for f in second["findings"])
+    other_app = {**genuine.application, "application_id": "APP-someone-else", "applicant_name": "Siti binti Ali",
+                 "nric": None}
+    third = client.post("/documents/verify", json={**_verify_body(genuine), "application": other_app}).json()
+    assert third["decision"] == "reject" and any(f["code"] == "duplicate_other_applicant" for f in third["findings"])
+
+
+def test_openapi_declares_every_status_the_api_returns(traced):
+    spec = traced[0].get("/openapi.json").json()
+    verify = spec["paths"]["/documents/verify"]["post"]["responses"]
+    assert {"200", "413", "422", "500", "503"} <= set(verify)
+    assert {"200", "422", "500"} <= set(spec["paths"]["/ask"]["post"]["responses"])
+    finding = spec["components"]["schemas"]["FindingOut"]["properties"]
+    assert {"code", "source", "severity", "detail"} == set(finding)
+
+
+@pytest.mark.parametrize("salt, warned", [(None, True), ("a-real-secret", False)])
+def test_development_trace_salt_is_warned_about(tmp_path, monkeypatch, caplog, salt, warned):
+    if salt is None:
+        monkeypatch.delenv("BANKRAG_TRACE_SALT", raising=False)
+    else:
+        monkeypatch.setenv("BANKRAG_TRACE_SALT", salt)
+    with caplog.at_level(logging.WARNING):
+        create_app(with_overrides(load_config(), audit_db=str(tmp_path / "a.db")))
+    assert any(getattr(r, "setting", "") == "BANKRAG_TRACE_SALT" for r in caplog.records) == warned

@@ -13,3 +13,14 @@ def test_generated_result_blocks_match_committed_reports():
 def test_docs_contain_the_generated_blocks():
     for rel in DOCS:
         assert "<!-- generated:results:start -->" in (ROOT / rel).read_text(), rel
+
+
+def test_relative_links_in_docs_resolve():
+    """Every relative markdown link in the docs points at a file that exists (generated blocks included)."""
+    import re
+    link = re.compile(r"\]\((?!https?:|#|mailto:)([^)#\s]+)(?:#[^)]*)?\)")
+    files = ["README.md", *sorted(str(p.relative_to(ROOT)) for p in (ROOT / "docs").glob("*.md")),
+             "infra/azure/README.md", "eval/README.md"]
+    broken = [f"{rel}: {target}" for rel in files for target in link.findall((ROOT / rel).read_text())
+              if not ((ROOT / rel).parent / target).exists()]
+    assert not broken, broken
