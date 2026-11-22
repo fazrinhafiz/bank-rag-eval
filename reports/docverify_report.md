@@ -1,6 +1,6 @@
 # Document verification evaluation
 
-Rules `doc-rules-v1` · source fingerprint `9359713c6abb` · test corpus `1b73e393e244` (350 documents: 200 genuine, 150 tampered) · dev corpus `ec3957609095`.
+Rules `doc-rules-v1` · source fingerprint `0de26d4bf35c` · test corpus `1b73e393e244` (350 documents: 200 genuine, 150 tampered) · dev corpus `ec3957609095`.
 
 **All documents are synthetic** (`src/bankrag/docverify/synth.py`): fictional people, employers and banks, simplified payroll rules, and tampering simulated by the same author who wrote the checks. These numbers show the checks do what they were designed to do and stay correct as the code changes. They are **not** an estimate of performance on real documents - see the limitations at the end.
 

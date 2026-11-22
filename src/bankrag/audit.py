@@ -16,6 +16,8 @@ audit log answers "what did the system decide, why, and with which versions" for
 interaction, and can be queried with plain SQL (sql/*.sql).
 
 Writes are serialised with BEGIN IMMEDIATE, so several threads or worker processes can share one file.
+The journal is WAL by default. WAL needs shared memory on one host, so on a network share (Azure Files,
+NFS) set BANKRAG_AUDIT_JOURNAL_MODE=DELETE; the deployment in infra/azure does.
 If an event cannot be written the caller gets an exception: a decision is not returned without its record.
 """
 from __future__ import annotations
@@ -33,6 +35,7 @@ from typing import Callable
 
 GENESIS = "0" * 64
 DEV_KEY = "bankrag-dev-audit-key-change-me"
+JOURNAL_MODES = ("WAL", "DELETE", "TRUNCATE")
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS audit_events (
@@ -87,6 +90,9 @@ class VerifyResult:
 class AuditLog:
     def __init__(self, path: str | Path, key: str | None = None, clock: Callable[[], str] = _now):
         self.path = str(path)
+        self.journal_mode = os.environ.get("BANKRAG_AUDIT_JOURNAL_MODE", "WAL").upper()
+        if self.journal_mode not in JOURNAL_MODES:
+            raise ValueError(f"BANKRAG_AUDIT_JOURNAL_MODE must be one of {JOURNAL_MODES}, not {self.journal_mode!r}")
         if self.path != ":memory:":
             Path(self.path).parent.mkdir(parents=True, exist_ok=True)
         self._key = (key or os.environ.get("BANKRAG_AUDIT_KEY") or DEV_KEY).encode()
@@ -96,7 +102,7 @@ class AuditLog:
         self.conn = sqlite3.connect(self.path, isolation_level=None, check_same_thread=False, timeout=30)
         self.conn.row_factory = sqlite3.Row
         if self.path != ":memory:":
-            self.conn.execute("PRAGMA journal_mode=WAL")
+            self.conn.execute(f"PRAGMA journal_mode={self.journal_mode}")
         self.conn.executescript(SCHEMA)
 
     def _hash(self, prev: str, seq: int, ts: str, event_type: str, request_id, subject_id, payload: str) -> str:

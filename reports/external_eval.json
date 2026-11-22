@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "source_fingerprint": "9359713c6abb",
+    "source_fingerprint": "0de26d4bf35c",
     "retrieval_mode": "tfidf",
     "abstain_threshold": 0.2813,
     "provider": "offline",

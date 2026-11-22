@@ -10,3 +10,8 @@ traces/
 .DS_Store
 synthetic_docs/
 audit/
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!example.tfvars

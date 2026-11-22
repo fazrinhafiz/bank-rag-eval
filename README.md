@@ -251,6 +251,27 @@ A log of 384 events (350 document decisions, 34 questions) verifies cleanly and 
 Details and the SQL report tables: [reports/audit_report.md](reports/audit_report.md).
 <!-- generated:audit:end -->
 
+## Deploying to Azure (written, validated, not deployed)
+
+[infra/azure/](infra/azure/) is Terraform for **Azure Container Apps**. **It has never been applied**:
+there is no Azure subscription behind this repo. A `terraform` CI job runs `fmt -check` and `validate` on every
+push, and [tests/test_infra.py](tests/test_infra.py) pins the design rules that validation can't see. Each of
+those tests fails when its rule is broken (checked by mutating `main.tf`).
+
+| concern | how the configuration handles it |
+|---|---|
+| Secrets | Key Vault, read by a managed identity. Values are set with `az keyvault secret set`, so they never enter Terraform state. |
+| Image | Private registry, admin user off, pulled by the same identity. `image_tag` refuses `latest`, so a revision is one gated build. |
+| Audit log | Azure Files share at `/app/audit`, **one replica** (one SQLite writer), `BANKRAG_AUDIT_JOURNAL_MODE=DELETE` because SQLite's WAL mode doesn't work on network shares. |
+| Anchors | Blob container with a time-based immutability policy, as write-once storage for `audit head` exports. |
+| Exposure | Internal ingress by default (an API gateway is the front door), HTTPS only, optional IP allow-list. |
+| Logs | The container's JSON logs go to Log Analytics. |
+
+Writing the Terraform found a real bug: the audit log always used WAL mode, which would have been unsafe on
+the Azure Files mount. The journal mode is now configurable. Gaps that only a real deployment would close,
+including the revision-rollover window where two replicas can briefly share the SQLite file, are listed in
+[infra/azure/README.md](infra/azure/README.md#known-gaps).
+
 ## Results
 
 All tables below are generated from the committed `reports/*.json` by `scripts/update_doc_results.py`.
@@ -379,6 +400,7 @@ reports/                    committed outputs of the runs quoted in this README
 docs/                       use-case assessment, model card, design decisions (ADRs)
 docs/samples/               six synthetic documents (genuine and tampered) with their expected decisions
 sql/                        reporting queries over the audit log (decisions, review queue, shared documents, versions)
+infra/azure/                Terraform for Azure Container Apps: validated in CI, never applied (no subscription)
 ```
 
 ## Testing the tests
@@ -444,6 +466,7 @@ report before release** (see [MODEL_CARD.md](docs/MODEL_CARD.md#change-managemen
 - **Document verification is evaluated on synthetic documents only,** with tampering written by the checks' author. See *What the numbers say* above and the limitations in [reports/docverify_report.md](reports/docverify_report.md).
 - **The document checks need a text layer.** Scans and phone photos go to manual review because OCR isn't implemented. The forensic checks are easy to evade once known.
 - **The audit log is a single SQLite file.** That's fine for one host with several workers (writes are serialised), but replicas on different hosts would need a shared database such as Postgres with the same schema and chain. The duplicate check is atomic within a process, not across processes.
+- **The Azure deployment is validated, not deployed.** `terraform validate` and static policy tests pass. Quota, region availability, role-propagation delays and SQLite locking over Azure Files are untested.
 
 ## Next steps (good first issues)
 
@@ -455,7 +478,8 @@ report before release** (see [MODEL_CARD.md](docs/MODEL_CARD.md#change-managemen
 6. **Record the human decision.** Add a reviewer endpoint that appends `review_decision` events (reviewer id, outcome, reason) to the same chain, so manual-review outcomes can be measured against the machine's findings.
 7. **Reconcile documents against each other.** Match the salary credit on the bank statement against the payslip's net pay and employer. This is the check that catches the consistent statement forgeries the anomaly score misses.
 8. **Add OCR for scanned documents** (Tesseract or a document-AI service), and evaluate it on a labelled public receipt or form dataset after checking its licence.
-9. **Recalibrate on real phrasing.** Label a dev sample of Banking77 queries (answerable from the docs or not), recalibrate the threshold on it, and report on held-out Banking77 queries. Currently only 45.3% of real in-scope queries are answered.
+9. **Move the audit log to Postgres and schedule anchor exports.** Port the schema and chain to Azure Database for PostgreSQL so the API can run more than one replica, and add a Container Apps Job that writes `audit head` to the write-once container.
+10. **Recalibrate on real phrasing.** Label a dev sample of Banking77 queries (answerable from the docs or not), recalibrate the threshold on it, and report on held-out Banking77 queries. Currently only 45.3% of real in-scope queries are answered.
 
 ## Documentation
 

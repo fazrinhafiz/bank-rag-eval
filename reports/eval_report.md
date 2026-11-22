@@ -8,7 +8,7 @@ Split **test**, 34 items. The abstain threshold was calibrated on the **dev** sp
 
 | key | value |
 |---|---|
-| source_fingerprint | `9359713c6abb` |
+| source_fingerprint | `0de26d4bf35c` |
 | config_fingerprint | `23773395ac63` |
 | golden_set_sha | `e571e0a4836a` |
 | prompt_version | `answer_v1` |
@@ -80,8 +80,8 @@ Split **test**, 34 items. The abstain threshold was calibrated on the **dev** sp
 
 | metric | value |
 |---|---|
-| end-to-end latency p50 | 0.34 ms |
-| end-to-end latency p95 | 0.46 ms |
+| end-to-end latency p50 | 0.35 ms |
+| end-to-end latency p95 | 0.44 ms |
 | mean tokens / request (estimated for offline) | 438 |
 | mean cost / request | $0.000000 |
 

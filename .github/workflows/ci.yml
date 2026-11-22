@@ -62,3 +62,25 @@ jobs:
       - name: Build image and smoke-test the running container
         run: bash scripts/container_smoke_test.sh
 
+
+  terraform:
+    # Validate-only: there is no Azure subscription, so nothing is planned or applied (infra/azure/README.md).
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: infra/azure
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+
+      - name: Format check
+        run: terraform fmt -check -recursive -diff
+
+      - name: Init without a backend (downloads providers only)
+        run: terraform init -backend=false -input=false
+
+      - name: Validate
+        run: terraform validate

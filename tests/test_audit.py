@@ -159,3 +159,20 @@ def test_audit_demo_catches_every_attack_it_should():
     d = demo(load_config())
     assert d["passed"] and d["pii_values_found_in_db"] == 0
     assert [r["detected"] for r in d["attacks"]] == [True, True, True, True, False, True]
+
+
+@pytest.mark.parametrize("mode", ["WAL", "DELETE"])
+def test_journal_mode_is_configurable(tmp_path, monkeypatch, mode):
+    """DELETE is for network shares (Azure Files), where SQLite's WAL is not supported."""
+    monkeypatch.setenv("BANKRAG_AUDIT_JOURNAL_MODE", mode.lower())
+    a = AuditLog(tmp_path / "j.db", key=KEY)
+    a.append("x", {"n": 1})
+    assert a.conn.execute("PRAGMA journal_mode").fetchone()[0].upper() == mode
+    assert a.verify().ok and (tmp_path / "j.db-wal").exists() == (mode == "WAL")
+    a.close()
+
+
+def test_unknown_journal_mode_refused(tmp_path, monkeypatch):
+    monkeypatch.setenv("BANKRAG_AUDIT_JOURNAL_MODE", "OFF")
+    with pytest.raises(ValueError, match="JOURNAL_MODE"):
+        AuditLog(tmp_path / "j.db", key=KEY)

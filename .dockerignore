@@ -13,3 +13,4 @@ data/external
 .env
 audit
 synthetic_docs
+infra
