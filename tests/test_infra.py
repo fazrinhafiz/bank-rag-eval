@@ -64,7 +64,7 @@ def test_every_secret_env_var_the_app_reads_is_wired():
 
 @pytest.mark.parametrize("pattern", [
     r"admin_enabled\s*=\s*false",                    # registry: identity pull, no admin password
-    r"enable_rbac_authorization\s*=\s*true",         # key vault: RBAC, not access policies
+    r"rbac_authorization_enabled\s*=\s*true",         # key vault: RBAC, not access policies
     r"purge_protection_enabled\s*=\s*true",
     r'min_tls_version\s*=\s*"TLS1_2"',
     r"https_traffic_only_enabled\s*=\s*true",
