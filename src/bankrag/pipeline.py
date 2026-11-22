@@ -1,6 +1,7 @@
 """input guardrail -> retrieve -> abstain if low confidence -> generate -> output guardrail -> trace"""
 from __future__ import annotations
 
+import logging
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -12,6 +13,8 @@ from .ingest import load_corpus
 from .prompts import Prompt
 from .retrieval import RetrievalResult, Retriever
 from .tracing import StageTimer, Tracer, query_hash
+
+log = logging.getLogger("bankrag.pipeline")
 
 INJECTION_REFUSAL = ("I can only help with questions about Bank Seri Andalas products and policies, "
                      "and I can't change how I operate. Please ask your question again.")
@@ -56,7 +59,7 @@ class Pipeline:
     def retrieve(self, masked_query: str) -> RetrievalResult:
         return self.retriever.search(masked_query, self.top_k)
 
-    def ask(self, question: str) -> Response:
+    def ask(self, question: str, request_id: str | None = None) -> Response:
         timer = StageTimer()
         with timer.stage("input_guardrail"):
             inp = check_input(question)
@@ -87,11 +90,16 @@ class Pipeline:
                 else:
                     resp.answer = gen.text
 
-        resp.trace = self._trace(question, resp, timer, gen)
+        resp.trace = self._trace(question, resp, timer, gen, request_id)
         self.tracer.write(resp.trace)
+        # One line per decision. Never the question text: only ids, outcome and timings.
+        log.info("decision", extra={"event": "decision", "trace_id": resp.trace["trace_id"], "reason": resp.reason,
+                                    "abstained": resp.abstained, "blocked": resp.blocked,
+                                    "confidence": resp.trace["top_score"], "pii_types": resp.pii_types,
+                                    "latency_ms": resp.trace["latency_ms"]["total"]})
         return resp
 
-    def _trace(self, question: str, resp: Response, timer: StageTimer, gen) -> dict:
+    def _trace(self, question: str, resp: Response, timer: StageTimer, gen, request_id: str | None = None) -> dict:
         provider = self.generator.provider
         price = self.cfg["cost_per_1k_tokens"].get(provider, {"input": 0.0, "output": 0.0})
         p_tok = gen.prompt_tokens if gen else 0
@@ -99,6 +107,7 @@ class Pipeline:
         return {
             "ts": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
             "trace_id": uuid.uuid4().hex,
+            "request_id": request_id,
             "query_hash": query_hash(question),
             "masked_query": resp.masked_query,
             "query_len": len(resp.masked_query.split()),

@@ -98,6 +98,37 @@ I can only help with questions about Bank Seri Andalas products and policies, an
   reason=injection_blocked
 ```
 
+## Run it as a service
+
+```bash
+pip install -e ".[api]"
+uvicorn bankrag.api:create_app --factory --port 8000     # OpenAPI docs at http://localhost:8000/docs
+
+docker build -t bankrag .
+docker run -p 8000:8000 -e BANKRAG_TRACE_SALT=<from your secret store> bankrag
+bash scripts/container_smoke_test.sh                     # build + run + 7 behaviour checks (also runs in CI)
+```
+
+```text
+$ curl -s -H 'X-Request-ID: case-42' -H 'content-type: application/json' \
+    -d '{"question": "My IC is 900101-14-5678. What is the late payment charge on my credit card?"}' localhost:8000/ask
+{"request_id": "case-42", "outcome": "answered", "reason": "ok", "confidence": 0.5821,
+ "answer": "If the minimum payment is not received by the payment due date, a late payment charge of 1% ... [credit-card#late-payment-charge] ...",
+ "citations": ["credit-card#late-payment-charge", "credit-card#minimum-monthly-payment"], "prompt_version": "answer_v1", "model": "offline-extractive-v1"}
+```
+
+| endpoint | purpose |
+|---|---|
+| `GET /health` | liveness, plus the versions behind every answer: `source_fingerprint`, retrieval mode, provider, prompt version, threshold |
+| `POST /ask` | one question through the guarded pipeline; returns the outcome (`answered` / `abstained` / `blocked`), the reason code and citations |
+
+**Operational design:**
+- **One ID end to end.** Every response carries `X-Request-ID`, taken from the caller if it's a safe token, otherwise generated. The same ID is in the access log line, the decision log line and the trace record.
+- **Logs are JSON, one object per line on stdout,** so any collector can ingest them. They contain IDs, outcomes, reason codes and timings, never the question text: the trace keeps only the PII-masked query. On an unhandled error the caller gets `{"error": "internal_error", "request_id": ...}` and the log records only the exception *type*, because messages and tracebacks can echo input.
+- **The container is small and safe by default:** `python:3.12-slim`, runs as uid 10001, has a Docker `HEALTHCHECK`, and no secrets are baked in (`BANKRAG_TRACE_SALT` comes from the environment).
+- **A running container can be tied to its evidence.** `/health` reports the same `source_fingerprint` as the eval reports it was gated on.
+- **CI checks the real artifact.** A `container` job builds the image and runs `scripts/container_smoke_test.sh`: health, a cited answer, an injection blocked, non-root user, request ID in the JSON logs, and no raw NRIC in the logs or trace file. This smoke test caught a config-path bug that only appears in a non-editable install, which unit tests can't see.
+
 ## Results
 
 All tables below are generated from the committed `reports/*.json` by `scripts/update_doc_results.py`.
@@ -208,10 +239,13 @@ src/bankrag/
   generators.py             OfflineExtractive baseline + OpenAI / Azure / Ollama-compatible client
   pipeline.py               guardrail -> retrieve -> abstain -> generate -> guardrail -> trace
   tracing.py                JSONL traces: salted hash + masked query only, latency, tokens, cost
+  api.py                    FastAPI service: /health, /ask, request ids, error handling
+  logging_setup.py          JSON logs with the request id stamped on every record
   eval/                     metrics, harness, dev-only calibration, benchmark, LLM judge, reports
   eval/external.py          independent evaluation on the public datasets
   monitoring/               PSI / KS drift monitor (incl. query-term drift), real-query traffic simulator
-tests/                      140+ tests incl. label checks, gate mutation tests, docs-in-sync check
+tests/                      160+ tests incl. label checks, gate mutation tests, API tests, docs-in-sync check
+Dockerfile                  non-root API image; scripts/container_smoke_test.sh checks it end to end
 reports/                    committed outputs of the runs quoted in this README
 docs/                       use-case assessment, model card, design decisions (ADRs)
 ```

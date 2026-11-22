@@ -14,7 +14,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def config_path() -> Path:
-    return Path(os.environ.get("BANKRAG_CONFIG", PROJECT_ROOT / "config.yaml")).resolve()
+    """$BANKRAG_CONFIG, else the repo's config.yaml (editable install), else ./config.yaml (installed package)."""
+    if os.environ.get("BANKRAG_CONFIG"):
+        return Path(os.environ["BANKRAG_CONFIG"]).resolve()
+    repo = PROJECT_ROOT / "config.yaml"
+    return (repo if repo.exists() else Path.cwd() / "config.yaml").resolve()
 
 
 def load_config(path: str | Path | None = None) -> dict:

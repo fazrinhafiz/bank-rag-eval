@@ -106,3 +106,15 @@ def test_write_abstain_threshold_preserves_comments(tmp_path):
     write_abstain_threshold(p, 0.4567)
     text = p.read_text()
     assert text.startswith("# keep me") and "abstain_threshold: 0.4567" in text and "other: 1" in text
+
+
+def test_config_path_prefers_env_then_repo_then_cwd(tmp_path, monkeypatch):
+    import bankrag.config as config
+
+    monkeypatch.setenv("BANKRAG_CONFIG", str(tmp_path / "custom.yaml"))
+    assert config.config_path() == (tmp_path / "custom.yaml").resolve()
+    monkeypatch.delenv("BANKRAG_CONFIG")
+    assert config.config_path() == (config.PROJECT_ROOT / "config.yaml").resolve()
+    monkeypatch.setattr(config, "PROJECT_ROOT", tmp_path / "site-packages")   # installed, not editable
+    monkeypatch.chdir(tmp_path)
+    assert config.config_path() == (tmp_path / "config.yaml").resolve()
